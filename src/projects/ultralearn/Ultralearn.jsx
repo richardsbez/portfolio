@@ -6,7 +6,7 @@
 import { useEffect, useRef, useCallback, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import Lenis from '@studio-freight/lenis'
+import Lenis from 'lenis'
 
 import './Ultralearn.css'
 // Importações de dados (certifique-se de que os caminhos e arquivos .js existam)

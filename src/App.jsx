@@ -3,7 +3,7 @@ import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
-import Lenis from "@studio-freight/lenis";
+import Lenis from 'lenis'
 import Resume from "./resume/Resume.jsx";
 import Projects from "./projects/Projects.jsx";
 import Ultralearn from './projects/ultralearn/Ultralearn.jsx';
