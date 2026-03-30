@@ -141,7 +141,7 @@ const PROJECTS = [
     year: "",
     stack: ["Java 21", "Virtual Threads", "NIO", "Data Structures"],
     descKey: "jseeker_desc",
-    url: "#",
+    url: "/projects/jseeker/",
     status: "concluído",
     details: {
       motivationKey: "jseeker_motivation",
@@ -153,6 +153,7 @@ const PROJECTS = [
   {
     id: "02",
     name: "UltraLearn",
+    metrics: ["100% offline", "Markdown + YAML", "Spaced repetition"],
     type: "pessoal",
     year: "",
     stack: ["Electron", "React", "TypeScript", "Markdown", "YAML"],
@@ -169,11 +170,12 @@ const PROJECTS = [
   {
     id: "03",
     name: "Waytranslate",
+    metrics: ["~40 idiomas", "Async Rust", "Self-hosted"],
     type: "pessoal",
     year: "",
     stack: ["Rust", "Docker", "Reqwest", "LibreTranslate"],
     descKey: "waytranslate_desc",
-    url: "#",
+    url: "/projects/waytranslate",
     status: "concluído",
     details: {
       motivationKey: "waytranslate_motivation",
@@ -185,11 +187,12 @@ const PROJECTS = [
   {
     id: "04",
     name: "ayrCore tech",
+    metrics: ["Perf. 100 Lighthouse", "GSAP + Lenis", "Firebase realtime"],
     type: "ambos",
     year: "",
     stack: ["React", "Node.js", "TypeScript", "gsap", "Lenis", "Tailwind CSS", "Firebase"],
     descKey: "ayrcore_desc",
-    url: "https://ayrcore.tech",
+    url: "https://www.ayrcoretech.com/en-US",
     status: "ativo",
     details: {
       motivationKey: "ayrcore_motivation",
@@ -201,6 +204,7 @@ const PROJECTS = [
   {
     id: "05",
     name: "SulExpress",
+    metrics: ["REST + JWT", "< 50 ms p95", "CRUD completo"],
     type: "ambos",
     year: "",
     stack: ["Python", "FastAPI", "PostgreSQL", "JavaScript"],
@@ -217,6 +221,7 @@ const PROJECTS = [
   {
     id: "06",
     name: "GammaIndex",
+    metrics: [".NET 8", "Azure Cloud", "Relatórios PDF"],
     type: "profissional",
     year: "",
     stack: ["C#", ".NET", "Azure"],
@@ -333,6 +338,17 @@ function ProjectRow({ p, isOpen, onToggle }) {
               <span key={i} className="proj-stack-item">{s}</span>
             ))}
           </div>
+          {p.url !== "#" && (
+            <a
+              href={p.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="proj-inline-link"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {t("visit_project")} ↗
+            </a>
+          )}
         </div>
       </div>
 

@@ -488,7 +488,7 @@ export default function Ultralearn() {
               {t.liveLabel} <ArrowUpRight />
             </a>
           )}
-          <a href="/" className="cs-btn cs-btn-ghost">{t.backLabel}</a>
+          <a href="/projects" className="cs-btn cs-btn-ghost">{t.backLabel}</a>
         </div>
       </section>
 
