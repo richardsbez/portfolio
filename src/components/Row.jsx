@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Row({ r, valueClass }) {
   const [copied, setCopied] = useState(false);
@@ -6,11 +7,8 @@ export default function Row({ r, valueClass }) {
   const isExternal = r.href && r.href.startsWith("http");
   const isCopyable = !!r.copy;
 
-
   const handleCopy = () => {
     const text = r.copy;
-
-    // tenta clipboard moderno, cai no execCommand se falhar
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(text).then(() => {
         setCopied(true);
@@ -36,18 +34,24 @@ export default function Row({ r, valueClass }) {
   };
 
   const value = r.href ? (
-    <a
-      href={r.href}
-      className={`${valueClass} s2-link`}
-      target={isExternal ? "_blank" : undefined}
-      rel={isExternal ? "noopener noreferrer" : undefined}
-    >
-      {r.v}
-    </a>
+    isExternal ? (
+      <a
+        href={r.href}
+        className={`${valueClass} s2-link`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {r.v}
+      </a>
+    ) : (
+      // ✅ Links internos usam <Link> do React Router — sem reload!
+      <Link to={r.href} className={`${valueClass} s2-link`}>
+        {r.v}
+      </Link>
+    )
   ) : (
     <span className={valueClass}>{r.v}</span>
   );
-
 
   return (
     <div className={`s2-row${r.href ? " s2-row--link" : ""}`}>
@@ -80,5 +84,4 @@ export default function Row({ r, valueClass }) {
       </div>
     </div>
   );
-
 }
