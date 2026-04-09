@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
@@ -16,7 +16,7 @@ import Row from "./components/Row.jsx";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const PAPER_HEX = 0xF4EFE6;
+
 
 /* ── CUSTOM CURSOR ── */
 function Cursor() {
@@ -31,36 +31,58 @@ function Cursor() {
     let mx = window.innerWidth / 2, my = window.innerHeight / 2;
     let rx = mx, ry = my;
     let rafId;
+    let moved = false; // ← rastreia se teve movimento
 
     const onMove = (e) => {
-      mx = e.clientX; my = e.clientY;
+      mx = e.clientX;
+      my = e.clientY;
+      moved = true;
       dot.style.transform = `translate(${mx - 4}px, ${my - 4}px)`;
     };
 
     const lerp = () => {
-      rx += (mx - rx) * 0.1;
-      ry += (my - ry) * 0.1;
-      ring.style.transform = `translate(${rx - 20}px, ${ry - 20}px)`;
       rafId = requestAnimationFrame(lerp);
+
+      // ── Só trabalha se teve movimento ──
+      if (!moved) return;
+
+      const dx = mx - rx;
+      const dy = my - ry;
+
+      // ── Para o update quando chegou perto o suficiente ──
+      if (Math.abs(dx) < 0.1 && Math.abs(dy) < 0.1) {
+        moved = false;
+        return;
+      }
+
+      rx += dx * 0.1;
+      ry += dy * 0.1;
+      ring.style.transform = `translate(${rx - 20}px, ${ry - 20}px)`;
     };
 
     const onEnter = () => ring.classList.add("cursor-ring--hover");
     const onLeave = () => ring.classList.remove("cursor-ring--hover");
 
-    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mousemove", onMove, { passive: true }); // ← passive
     rafId = requestAnimationFrame(lerp);
 
-    const attachListeners = () => {
-      document.querySelectorAll("a, button, [data-cursor]").forEach(el => {
-        el.addEventListener("mouseenter", onEnter);
-        el.addEventListener("mouseleave", onLeave);
-      });
+    // ── Usar MutationObserver em vez de attachListeners uma vez só ──
+    const attachTo = (el) => {
+      el.addEventListener("mouseenter", onEnter);
+      el.addEventListener("mouseleave", onLeave);
     };
-    attachListeners();
+
+    document.querySelectorAll("a, button, [data-cursor]").forEach(attachTo);
+
+    const mo = new MutationObserver(() => {
+      document.querySelectorAll("a, button, [data-cursor]").forEach(attachTo);
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
 
     return () => {
       document.removeEventListener("mousemove", onMove);
       cancelAnimationFrame(rafId);
+      mo.disconnect();
     };
   }, []);
 
@@ -71,7 +93,6 @@ function Cursor() {
     </>
   );
 }
-
 /* ── TICKER ── */
 function Ticker({ items, dark = false, speed = 22 }) {
   const doubled = [...items, ...items, ...items, ...items];
@@ -88,211 +109,216 @@ function Ticker({ items, dark = false, speed = 22 }) {
   );
 }
 
-/* ── THREE.JS SCENE ── */
-function Scene3D() {
+/* ── HALF SCENE ── */
+function HalfScene({ isRight = false }) {
   const boxRef = useRef(null);
 
   useEffect(() => {
     const box = boxRef.current;
     if (!box) return;
 
-    let renderer, raf;
+    const SIZE = box.clientWidth || 480;
+    let renderer, raf, isVisible = true;
 
-    const id = requestAnimationFrame(() => {
-      const W = box.clientWidth || 600;
-      const H = box.clientHeight || 600;
+    // ── Criar renderer direto, sem nested rAF ──
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, stencil: true });
+    renderer.setSize(SIZE, SIZE);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // era 2
+    renderer.setClearColor(0x000000, 0);
+    renderer.localClippingEnabled = true;
+    box.appendChild(renderer.domElement);
 
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setSize(W, H);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.setClearColor(0x000000, 0);
-      box.appendChild(renderer.domElement);
+    const scene = new THREE.Scene();
+    const cam = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+    cam.position.z = 7.0;
 
-      const scene = new THREE.Scene();
-      const cam = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
-      cam.position.z = 7.0;
+    const clipPlane = new THREE.Plane(
+      isRight ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(-1, 0, 0),
+      0
+    );
 
-      const knot = new THREE.Mesh(
-        new THREE.TorusKnotGeometry(1.2, 0.38, 128, 16, 2, 3),
-        new THREE.MeshBasicMaterial({ color: 0x18150F, wireframe: true })
-      );
-      scene.add(knot);
+    // ── Geometria reduzida: 200×32 → 120×20 ──
+    const knotGeom = new THREE.TorusKnotGeometry(1.2, 0.38, 120, 20, 2, 3);
+    const ringGeom = new THREE.TorusGeometry(1.65, 0.007, 8, 64); // era 80
 
-      const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(1.65, 0.007, 8, 80),
-        new THREE.MeshBasicMaterial({ color: 0xE5430A })
-      );
-      scene.add(ring);
+    const group = new THREE.Group();
+    scene.add(group);
 
-      const pts = [];
-      for (let i = 0; i < 200; i++) {
-        const θ = Math.random() * Math.PI * 2;
-        const φ = Math.acos(2 * Math.random() - 1);
-        const r = 2.1 + Math.random() * 1.2;
-        pts.push(r * Math.sin(φ) * Math.cos(θ), r * Math.sin(φ) * Math.sin(θ), r * Math.cos(φ));
-      }
-      const pg = new THREE.BufferGeometry();
-      pg.setAttribute("position", new THREE.Float32BufferAttribute(pts, 3));
-      scene.add(new THREE.Points(pg, new THREE.PointsMaterial({ color: 0x9A9488, size: 0.02 })));
-
-      const tick = () => {
-        raf = requestAnimationFrame(tick);
-        knot.rotation.x += 0.003; knot.rotation.y += 0.005;
-        ring.rotation.z += 0.004;
-        renderer.render(scene, cam);
-      };
-      tick();
+    const mBack = new THREE.MeshBasicMaterial({
+      side: THREE.BackSide,
+      clippingPlanes: [clipPlane],
+      depthWrite: false,
+      colorWrite: false,
+      stencilWrite: true,
+      stencilFunc: THREE.AlwaysStencilFunc,
+      stencilFail: THREE.KeepStencilOp,
+      stencilZFail: THREE.KeepStencilOp,
+      stencilZPass: THREE.IncrementWrapStencilOp,
     });
+    const meshBack = new THREE.Mesh(knotGeom, mBack);
+    meshBack.renderOrder = 0;
+    group.add(meshBack);
 
-    return () => {
-      cancelAnimationFrame(id);
-      cancelAnimationFrame(raf);
-      if (renderer && box.contains(renderer.domElement)) {
-        renderer.dispose();
-        box.removeChild(renderer.domElement);
-      }
-    };
-  }, []);
+    const mFront = new THREE.MeshBasicMaterial({
+      side: THREE.FrontSide,
+      clippingPlanes: [clipPlane],
+      depthWrite: false,
+      colorWrite: false,
+      stencilWrite: true,
+      stencilFunc: THREE.AlwaysStencilFunc,
+      stencilFail: THREE.KeepStencilOp,
+      stencilZFail: THREE.KeepStencilOp,
+      stencilZPass: THREE.DecrementWrapStencilOp,
+    });
+    const meshFront = new THREE.Mesh(knotGeom, mFront);
+    meshFront.renderOrder = 0;
+    group.add(meshFront);
 
-  return <div ref={boxRef} style={{ width: "100%", height: "100%" }} />;
-}
+    const wire = new THREE.Mesh(knotGeom, new THREE.MeshBasicMaterial({
+      color: 0x18150F,
+      wireframe: true,
+      clippingPlanes: [clipPlane],
+    }));
+    wire.renderOrder = 2;
+    group.add(wire);
 
-/* ── MATRIX NAME ── */
-const _MC = "アイウエオカキクケコサシスセソタチツテト0123456789RICHADSBEZERAXYZ@#$%&=+~?!";
-const rmc = () => _MC[Math.floor(Math.random() * _MC.length)];
+    const capGeom = new THREE.PlaneGeometry(10, 10);
+    capGeom.rotateY(Math.PI / 2);
+    const cap = new THREE.Mesh(capGeom, new THREE.MeshBasicMaterial({
+      color: 0xE5430A,
+      depthWrite: false,
+      stencilWrite: true,
+      stencilRef: 0,
+      stencilFunc: THREE.NotEqualStencilFunc,
+      stencilFail: THREE.ZeroStencilOp,
+      stencilZFail: THREE.ZeroStencilOp,
+      stencilZPass: THREE.ZeroStencilOp,
+    }));
+    cap.renderOrder = 1;
+    scene.add(cap);
 
-function sampleText(line, font, fontSize, threshold = 80) {
-  const CELL = 11;
-  const tmp = document.createElement("canvas");
-  const ctx = tmp.getContext("2d");
-  ctx.font = font;
-  const tw = Math.ceil(ctx.measureText(line).width);
-  const W = tw + CELL * 4;
-  const H = Math.ceil(fontSize * 1.4);
-  tmp.width = W; tmp.height = H;
-  ctx.font = font;
-  ctx.textBaseline = "top";
-  ctx.fillStyle = "#fff";
-  ctx.fillText(line, CELL, 0);
-  const { data } = ctx.getImageData(0, 0, W, H);
-  const pts = [];
-  for (let y = 0; y < H; y += CELL)
-    for (let x = 0; x < W; x += CELL) {
-      const cx = Math.min(x + (CELL >> 1), W - 1);
-      const cy = Math.min(y + (CELL >> 1), H - 1);
-      if (data[(cy * W + cx) * 4 + 3] > threshold) pts.push({ x, y });
+    const ring = new THREE.Mesh(ringGeom, new THREE.MeshBasicMaterial({
+      color: 0xE5430A,
+      clippingPlanes: [clipPlane],
+    }));
+    ring.renderOrder = 2;
+    scene.add(ring);
+
+    // ── Partículas reduzidas: 200 → 120 ──
+    const pts = [];
+    for (let i = 0; i < 120; i++) {
+      const θ = Math.random() * Math.PI * 2;
+      const φ = Math.acos(2 * Math.random() - 1);
+      const r = 2.1 + Math.random() * 1.2;
+      pts.push(r * Math.sin(φ) * Math.cos(θ), r * Math.sin(φ) * Math.sin(θ), r * Math.cos(φ));
     }
-  return { pts, W, H, CELL };
-}
+    const pg = new THREE.BufferGeometry();
+    pg.setAttribute("position", new THREE.Float32BufferAttribute(pts, 3));
+    scene.add(new THREE.Points(pg, new THREE.PointsMaterial({
+      color: 0x9A9488, size: 0.02, clippingPlanes: [clipPlane],
+    })));
 
-function MatrixName() {
-  const wrapRef = useRef(null);
-  const canvasRef = useRef(null);
-  const stateRef = useRef({ hovered: false, particles: [], raf: null });
-
-  useEffect(() => {
-    const wrap = wrapRef.current;
-    const canvas = canvasRef.current;
-    if (!wrap || !canvas) return;
-
-    const st = stateRef.current;
-    const CELL = 11;
-    const INK = "#18150F";
-    const EMB = "#E5430A";
-    const FOG = "#9A9488";
-
-    const init = () => {
-      const vw = window.innerWidth;
-      const fs = Math.max(61, Math.min(104, vw * 0.07));
-      const font = `900 ${fs}px "Barlow Condensed", sans-serif`;
-      const LINE_H = Math.ceil(fs * 1.08);
-
-      const { pts: pts1, W: W1, H: H1 } = sampleText("Richard S.", font, fs);
-      const { pts: pts2, W: W2, H: H2 } = sampleText("Bezerra", font, fs);
-
-      const CW = Math.max(W1, W2) + CELL;
-      const CH = H1 + LINE_H + H2 + CELL;
-
-      canvas.width = CW; canvas.height = CH;
-      canvas.style.width = CW + "px"; canvas.style.height = CH + "px";
-      wrap.style.width = CW + "px"; wrap.style.height = CH + "px";
-
-      st.particles = [];
-      const add = (pts, offY) => pts.forEach(p => st.particles.push({
-        tx: p.x, ty: p.y + offY, x: p.x, y: p.y + offY,
-        vx: 0, vy: 0, char: rmc(),
-        timer: Math.random() * 200, nextSwap: 60 + Math.random() * 180,
-        alpha: 0.72 + Math.random() * 0.28,
-      }));
-      add(pts1, 0); add(pts2, LINE_H);
+    const tick = () => {
+      if (!isVisible) { raf = requestAnimationFrame(tick); return; }
+      raf = requestAnimationFrame(tick);
+      const t = performance.now() * 0.001;
+      group.rotation.x = t * 0.3;
+      group.rotation.y = t * 0.5;
+      ring.rotation.z = t * 0.4;
+      renderer.render(scene, cam);
     };
+    raf = requestAnimationFrame(tick);
 
-    const loop = () => {
-      const ctx = canvas.getContext("2d");
-      const cx = canvas.width / 2;
-      const cy = canvas.height / 2;
-
-      const tick = () => {
-        st.raf = requestAnimationFrame(tick);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.font = `${CELL - 1}px "IBM Plex Mono", monospace`;
-
-        for (const p of st.particles) {
-          p.timer += 16;
-          if (p.timer > p.nextSwap) {
-            p.timer = 0; p.nextSwap = 55 + Math.random() * 180;
-            p.char = rmc(); p.alpha = 0.6 + Math.random() * 0.4;
-          }
-          if (st.hovered) {
-            const dx = p.x - cx, dy = p.y - cy;
-            const len = Math.hypot(dx, dy) || 1;
-            p.vx += (dx / len) * 1.4; p.vy += (dy / len) * 1.4;
-            p.vx *= 0.88; p.vy *= 0.88;
-          } else {
-            p.vx += (p.tx - p.x) * 0.12; p.vy += (p.ty - p.y) * 0.12;
-            p.vx *= 0.68; p.vy *= 0.68;
-          }
-          p.x += p.vx; p.y += p.vy;
-
-          const r = Math.random();
-          ctx.fillStyle = r < 0.025 ? EMB : r < 0.07 ? FOG : INK;
-          ctx.globalAlpha = st.hovered ? 0.2 + Math.random() * 0.8 : p.alpha;
-          ctx.fillText(p.char, p.x, p.y + CELL);
-        }
-        ctx.globalAlpha = 1;
-      };
-      tick();
-    };
-
-    const fontSpec = `900 80px "Barlow Condensed"`;
-    document.fonts.load(fontSpec).then(() => {
-      requestAnimationFrame(() => { init(); loop(); });
-    });
-
-    const onEnter = () => { st.hovered = true; };
-    const onLeave = () => { st.hovered = false; };
-    const onResize = () => {
-      cancelAnimationFrame(st.raf);
-      document.fonts.load(fontSpec).then(() =>
-        requestAnimationFrame(() => { init(); loop(); })
-      );
-    };
-
-    wrap.addEventListener("mouseenter", onEnter);
-    wrap.addEventListener("mouseleave", onLeave);
-    window.addEventListener("resize", onResize);
+    // ── Pausar RAF quando fora da viewport ──
+    const io = new IntersectionObserver(
+      ([entry]) => { isVisible = entry.isIntersecting; },
+      { threshold: 0 }
+    );
+    io.observe(box);
 
     return () => {
-      cancelAnimationFrame(st.raf);
-      wrap.removeEventListener("mouseenter", onEnter);
-      wrap.removeEventListener("mouseleave", onLeave);
-      window.removeEventListener("resize", onResize);
+      cancelAnimationFrame(raf);
+      io.disconnect();
+      knotGeom.dispose();
+      ringGeom.dispose();
+      capGeom.dispose();
+      renderer.dispose();
+      if (box.contains(renderer.domElement)) box.removeChild(renderer.domElement);
     };
   }, []);
 
   return (
-    <div ref={wrapRef} className="mx-wrap">
-      <canvas ref={canvasRef} className="mx-canvas" />
+    <div ref={boxRef} className={`half-scene-box${isRight ? " half-scene-box--right" : ""}`} />
+  );
+}
+
+/* ── SCRAMBLE NAME ── */
+const _SC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+const rsc = () => _SC[Math.floor(Math.random() * _SC.length)];
+
+const TARGET_1 = "RICHARD S.";
+const TARGET_2 = "BEZERRA";
+
+function renderScramble(target, resolved) {
+  return target.split("").map((c, i) => {
+    if (c === " ") return " ";
+    if (resolved[i]) return c;
+    return c === "." ? (Math.random() < 0.3 ? "." : rsc()) : rsc();
+  }).join("");
+}
+
+function ScrambleName() {
+  const line1Ref = useRef(null);
+  const line2Ref = useRef(null);
+  const rafRef = useRef(null);
+
+  const runScramble = () => {
+    cancelAnimationFrame(rafRef.current);
+    const res1 = new Array(TARGET_1.length).fill(false);
+    const res2 = new Array(TARGET_2.length).fill(false);
+    let ptr = 0;
+    const total = TARGET_1.length + TARGET_2.length;
+    let lastResolve = performance.now();
+    const INTERVAL = 90;
+
+    const loop = (now) => {
+      if (now - lastResolve > INTERVAL && ptr < total) {
+        lastResolve = now;
+        if (ptr < TARGET_1.length) res1[ptr] = true;
+        else res2[ptr - TARGET_1.length] = true;
+        ptr++;
+      }
+
+      if (ptr >= total) {
+        if (line1Ref.current) line1Ref.current.textContent = TARGET_1;
+        if (line2Ref.current) line2Ref.current.textContent = TARGET_2;
+        return;
+      }
+
+      if (line1Ref.current) line1Ref.current.textContent = renderScramble(TARGET_1, res1);
+      if (line2Ref.current) line2Ref.current.textContent = renderScramble(TARGET_2, res2);
+
+      rafRef.current = requestAnimationFrame(loop);
+    };
+
+    rafRef.current = requestAnimationFrame(loop);
+  };
+
+  useEffect(() => {
+    runScramble();
+    return () => cancelAnimationFrame(rafRef.current);
+  }, []);
+
+  return (
+    <div className="sn-wrap" onMouseEnter={runScramble}>
+      <span ref={line1Ref} className="sn-line sn-l1">{TARGET_1}</span>
+      <span ref={line2Ref} className="sn-line sn-l2">{TARGET_2}</span>
+      <div className="sn-rule" />
+      <span className="sn-sub">
+        <span className="sn-sub-dot" />
+        FULL-STACK DEV · BRASIL · 2025
+        <span className="sn-sub-dot" />
+      </span>
     </div>
   );
 }
@@ -300,14 +326,21 @@ function MatrixName() {
 /* ── HOME ── */
 function Home({ lang, setLang }) {
   const t = DATA[lang];
-  const s2Ref = useRef(null); // agora aponta pro h-track
-  const hOuter = useRef(null); // wrapper pinado
+
+  const s2Ref = useRef(null);
+  const hOuter = useRef(null);
   const mantraRef = useRef(null);
+
+  const s1PinRef = useRef(null);
+  const leftHalfRef = useRef(null);
+  const rightHalfRef = useRef(null);
+  const heroNameRef = useRef(null);
+
+  const lenisRef = useRef(null);
+  const tickerFnRef = useRef(null);
   const navigate = useNavigate();
-  const lenisRef = useRef(null);   // ← NOVO
 
-
-
+  const mantraRevealedRef = useRef(false);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -315,10 +348,37 @@ function Home({ lang, setLang }) {
       easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     });
     lenisRef.current = lenis;
-    gsap.ticker.add(time => lenis.raf(time * 1000));
+
+    const tickerFn = (time) => lenis.raf(time * 1000);
+    tickerFnRef.current = tickerFn;
+    gsap.ticker.add(tickerFn);
     gsap.ticker.lagSmoothing(0);
 
-    // ── S2 reveal (IntersectionObserver, sem pin) ──
+    /* ── S1 — PIN + SPLIT ANIMATION ── */
+    const s1El = s1PinRef.current;
+    if (s1El && leftHalfRef.current && rightHalfRef.current && heroNameRef.current) {
+
+      gsap.set(heroNameRef.current, { opacity: 0, y: 0 });
+
+      const splitTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: s1El,
+          start: "top top",
+          end: "+=100%",
+          pin: true,
+          scrub: 1.4,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      splitTl
+        .to(leftHalfRef.current, { x: "-54vw", ease: "power2.inOut" }, 0)
+        .to(rightHalfRef.current, { x: "54vw", ease: "power2.inOut" }, 0)
+        .to(heroNameRef.current, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+    }
+
+    /* ── S2 — reveal com IntersectionObserver ── */
     if (s2Ref.current) {
       const dc = s2Ref.current;
       const tlR = dc.querySelectorAll(".q-tl .s2-row");
@@ -349,11 +409,25 @@ function Home({ lang, setLang }) {
       revealEls.forEach(el => io2.observe(el));
     }
 
-    // ── Horizontal panel: S2 → S3 ──
+    /* ── Painel horizontal S2 → S3 ── */
     const outerEl = hOuter.current;
     const trackEl = outerEl?.querySelector(".h-track");
 
     if (outerEl && trackEl) {
+      requestAnimationFrame(() => ScrollTrigger.refresh());
+
+      // ── Extract reveal logic to reuse it ──
+      const revealMantra = () => {
+        mantraRevealedRef.current = true;   // ← add this line
+        if (!mantraRef.current) return;
+        const rows = mantraRef.current.querySelectorAll(".m-row");
+        rows.forEach((el, i) => {
+          if (el.dataset.animated) return;
+          el.dataset.animated = "1";
+          gsap.to(el, { opacity: 1, y: 0, duration: 0.85, ease: "power3.out", delay: i * 0.1 });
+        });
+      };
+
       gsap.to(trackEl, {
         x: () => -window.innerWidth,
         ease: "none",
@@ -365,46 +439,79 @@ function Home({ lang, setLang }) {
           scrub: 1,
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            if (self.progress >= 0.4) revealMantra();  // ← simplified
+          },
         },
       });
+
+
     }
 
-    // ── S3 manifesto reveal ──
-    const rows = mantraRef.current
-      ? Array.from(mantraRef.current.querySelectorAll(".m-row"))
-      : [];
+    if (mantraRef.current) {
+      const rows = Array.from(mantraRef.current.querySelectorAll(".m-row"));
 
-    rows.forEach((el, i) => {
-      el.style.opacity = "0";
-      el.style.transform = "translateY(40px)";
-      el.style.transition = `opacity .85s cubic-bezier(.16,1,.3,1) ${i * 0.1}s,
-                            transform .85s cubic-bezier(.16,1,.3,1) ${i * 0.1}s`;
-    });
-
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = "1";
-          entry.target.style.transform = "translateY(0)";
-          io.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.15 });
-    rows.forEach(el => io.observe(el));
-
+      if (mantraRevealedRef.current) {
+        // user is already at S3 — show immediately, no animation needed
+        gsap.set(rows, { opacity: 1, y: 0 });
+      } else {
+        // first visit — hide and wait for scroll threshold
+        gsap.set(rows, { opacity: 0, y: 40 });
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            ScrollTrigger.refresh();
+            const hST = ScrollTrigger.getAll().find(s => s.trigger === outerEl);
+            if (hST && hST.progress >= 0.4) revealMantra();
+          });
+        });
+      }
+    }
     return () => {
+      if (tickerFnRef.current) {
+        gsap.ticker.remove(tickerFnRef.current);
+        tickerFnRef.current = null;
+      }
       lenis.destroy();
       ScrollTrigger.getAll().forEach(s => s.kill());
-      io.disconnect();
     };
+  }, []);
+
+  useEffect(() => {
+    // nada aqui por enquanto — as traduções já são reativas via `t = DATA[lang]`
   }, [lang]);
 
-  const tickerItems = t.ticker;
-
   const goToProjects = () => {
-    if (lenisRef.current) lenisRef.current.destroy();
+    if (tickerFnRef.current) {
+      gsap.ticker.remove(tickerFnRef.current);
+      tickerFnRef.current = null;
+    }
+    if (lenisRef.current) {
+      lenisRef.current.destroy();
+      lenisRef.current = null;
+    }
     ScrollTrigger.getAll().forEach(s => s.kill());
     navigate("/projects");
+  };
+
+  // ── adicione junto com goToProjects ──
+  const handleNav = (href) => {
+    if (tickerFnRef.current) {
+      gsap.ticker.remove(tickerFnRef.current);
+      tickerFnRef.current = null;
+    }
+    if (lenisRef.current) {
+      lenisRef.current.destroy();
+      lenisRef.current = null;
+    }
+    ScrollTrigger.getAll().forEach(s => s.kill());
+    navigate(href);
+
+    // Links externos abrem em nova aba, internos usam navigate
+    if (href.startsWith('http')) {
+      window.open(href, '_blank', 'noopener');
+    } else {
+      navigate(href);
+    }
   };
 
   return (
@@ -433,36 +540,48 @@ function Home({ lang, setLang }) {
         </div>
       </nav>
 
-      {/* ── S1 — EDITORIAL HERO ── */}
-      <section className="s1">
+      {/* ── S1 — HERO COM SPLIT 3D ── */}
+      <section className="s1" ref={s1PinRef}>
 
-        {/* Grid editorial de fundo */}
         <div className="s1-grid" aria-hidden="true">
           <div className="s1-grid-h s1-grid-h1" />
           <div className="s1-grid-h s1-grid-h2" />
           <div className="s1-grid-v" />
         </div>
 
-        {/* 3D scene */}
-        <div className="s1-canvas-bg" aria-hidden="true">
-          <Scene3D />
-        </div>
-
-        {/* Barra superior editorial */}
         <div className="s1-topbar anim-1">
           <span className="s1-topbar-tag">001 / HERO</span>
           <span className="s1-topbar-coords">23°33′S · 46°38′W · BRASIL</span>
         </div>
 
-        {/* Centro — nome dominante */}
-        <div className="s1-center">
-          <span className="eyebrow anim-1">portfólio · richard s. bezerra</span>
-          <div className="s1-name-wrap anim-2">
-            <MatrixName />
+        <div className="s1-split-wrapper">
+
+          <div className="s1-hero-name" ref={heroNameRef}>
+            <ScrambleName />
           </div>
+
+          <div className="s1-split-scene">
+
+            <div className="split-half split-half--left" ref={leftHalfRef}>
+              <HalfScene isRight={false} />
+            </div>
+
+            <div className="split-crack-3d" aria-hidden="true">
+              <div className="split-crack-3d__face split-crack-3d__face--left" />
+              <div className="split-crack-3d__face split-crack-3d__face--right" />
+              <div className="split-crack-3d__core" />
+            </div>
+
+            <div className="split-half split-half--right" ref={rightHalfRef}>
+              <HalfScene isRight={true} />
+            </div>
+
+          </div>
+
+          <span className="s1-eyebrow-float anim-1">portfólio · richard s. bezerra</span>
+
         </div>
 
-        {/* Rodapé da seção */}
         <div className="s1-footer anim-3">
           <p className="s1-sub">{t.sub}</p>
           <div className="s1-footer-right">
@@ -474,11 +593,8 @@ function Home({ lang, setLang }) {
           </div>
         </div>
 
-
-        {/* Linha de acento vertical esquerda */}
         <div className="s1-accent-line" aria-hidden="true" />
 
-        {/* Ponto de interseção central */}
         <div className="s1-crosshair" aria-hidden="true">
           <div className="s1-crosshair-dot" />
         </div>
@@ -486,7 +602,7 @@ function Home({ lang, setLang }) {
       </section>
 
       {/* ── TICKER ── */}
-      <Ticker items={tickerItems} speed={24} />
+      <Ticker items={t.ticker} speed={24} />
 
       {/* ── HORIZONTAL PANELS: S2 + S3 ── */}
       <div ref={hOuter} className="h-outer">
@@ -495,10 +611,7 @@ function Home({ lang, setLang }) {
           {/* ── PANEL S2 ── */}
           <div ref={s2Ref} className="s2 h-panel">
             <div className="s2-vline" />
-            <button
-              className="s2-proj-link"
-              onClick={goToProjects}
-            >
+            <button className="s2-proj-link" onClick={goToProjects}>
               {t.projects}
             </button>
             <div className="s2-hline" />
@@ -507,7 +620,12 @@ function Home({ lang, setLang }) {
               <div className="s2-quad top q-tl">
                 <p className="s2-ql">{t.prof.ey}</p>
                 {t.prof.rows.map((r, i) => (
-                  <Row key={i} r={r} valueClass={`s2-v${r.em ? " em" : ""}`} />
+                  <Row
+                    key={i}
+                    r={r}
+                    valueClass={`s2-v${r.em ? " em" : ""}`}
+                    onNavigate={r.href && !r.href.startsWith("http") ? () => handleNav(r.href) : undefined}
+                  />
                 ))}
               </div>
               <div className="s2-quad top q-tr">
@@ -551,7 +669,7 @@ function Home({ lang, setLang }) {
             <div className="s3-transit">
               <span className="s3-eyebrow">003 / manifesto</span>
               <div className="s3-transit-rule" />
-              <span className="s3-year">RSB — 2025</span>
+              <span className="s3-year">RSB</span>
             </div>
             <div ref={mantraRef}>
               {t.mantra.map((line, i) => {
@@ -580,7 +698,8 @@ function Home({ lang, setLang }) {
           </section>
 
         </div>
-      </div>   </>
+      </div>
+    </>
   );
 }
 

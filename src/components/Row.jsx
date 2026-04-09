@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function Row({ r, valueClass }) {
+export default function Row({ r, valueClass, onNavigate }) {
   const [copied, setCopied] = useState(false);
 
   const isExternal = r.href && r.href.startsWith("http");
@@ -44,8 +44,11 @@ export default function Row({ r, valueClass }) {
         {r.v}
       </a>
     ) : (
-      // ✅ Links internos usam <Link> do React Router — sem reload!
-      <Link to={r.href} className={`${valueClass} s2-link`}>
+      <Link
+        to={r.href}
+        className={`${valueClass} s2-link`}
+        onClick={onNavigate ? (e) => { e.preventDefault(); onNavigate(); } : undefined}
+      >
         {r.v}
       </Link>
     )

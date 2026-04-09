@@ -423,6 +423,10 @@ export default function Projects() {
   const [badge, setBadge] = useState({ visible: false, label: "" });
   const [lang, setLang] = useState("pt");
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   /** Pré-computa todos os temas uma única vez */
   const themes = useMemo(
     () => Object.fromEntries(PROJECTS.map((p) => [p.id, generateTheme(p)])),
