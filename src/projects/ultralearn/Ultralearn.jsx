@@ -86,34 +86,7 @@ export default function Ultralearn() {
     }
   }, [])
 
-  // ── 2. Cursor customizado ────────────────────────────────────────────────────
-  useEffect(() => {
-    const cursor = cursorRef.current
-    const cursorRing = cursorRingRef.current
-    if (!cursor || !cursorRing) return
 
-    const xCursor = gsap.quickSetter(cursor, 'x', 'px')
-    const yCursor = gsap.quickSetter(cursor, 'y', 'px')
-
-    const onMove = (e) => {
-      xCursor(e.clientX - 5)
-      yCursor(e.clientY - 5)
-      gsap.to(cursorRing, { x: e.clientX, y: e.clientY, duration: 0.35, ease: 'power2.out' })
-    }
-
-    const onEnterLink = () => cursorRing.classList.add('hovering')
-    const onLeaveLink = () => cursorRing.classList.remove('hovering')
-
-    document.addEventListener('mousemove', onMove)
-    document.querySelectorAll('a, button, .cs-metric-card, .cs-stack-card').forEach((el) => {
-      el.addEventListener('mouseenter', onEnterLink)
-      el.addEventListener('mouseleave', onLeaveLink)
-    })
-
-    return () => {
-      document.removeEventListener('mousemove', onMove)
-    }
-  }, [])
 
   // ── 3. Progress bar de leitura ───────────────────────────────────────────────
   useEffect(() => {
@@ -494,7 +467,7 @@ export default function Ultralearn() {
 
       <footer className="cs-footer">
         <span>// {t.footer}</span>
-        <span>MIT © 2025</span>
+        <span>MIT © </span>
       </footer>
     </div>
   )

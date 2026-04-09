@@ -681,14 +681,14 @@ html, body {
   letter-spacing: .18em;
   text-transform: uppercase;
   background: none;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--rule) !important;
   padding: .28rem .9rem;
   cursor: pointer;
-  color: var(--ink);
+  color: var(--ink) !important; 
   transition: background .2s, color .2s, border-color .2s;
 }
-.cv-lang-btn:hover      { background: var(--ink); color: var(--p); border-color: var(--ink); }
-.cv-lang-btn--active    { background: var(--ink); color: var(--p); border-color: var(--ink); }
+.cv-lang-btn:hover      { background: var(--ink) !important; color: var(--p) !important; border-color: var(--ink) !important; }
+.cv-lang-btn--active    { background: var(--ink) !important; color: var(--p) !important; border-color: var(--ink) !important; }
 
 /* Link utilitário reutilizável */
 .nav-projects-link {
