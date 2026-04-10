@@ -33,6 +33,7 @@ export default function Resume() {
                   key={code}
                   className={`cv-lang-btn${lang === code ? " cv-lang-btn--active" : ""}`}
                   onClick={() => setLang(code)}
+                  style={{ color: lang === code ? '#fff' : 'rgba(255,255,255,0.5)' }}
                 >
                   {label}
                 </button>
