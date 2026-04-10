@@ -103,6 +103,15 @@ export const translations = {
     gammaindex_h1: "Redução de 65% no retrabalho",
     gammaindex_h2: "Integração com 3 sistemas legados",
     gammaindex_h3: "200+ usuários",
+
+    // ── Core-Shell Mesh ──
+    coreshell_desc: "Plataforma de análise financeira preditiva em tempo real baseada em arquitetura Local-First, utilizando WebAssembly no cliente e CRDTs no backend para convergência de estado.",
+    coreshell_motivation: "Resolver o 'Paradoxo da Malha Global Híbrida': permitir processamento distribuído massivo no frontend sem expor modelos de IA, mantendo consistência de estado global com latência sub-50ms.",
+    coreshell_process: "Substituição do modelo cliente-servidor tradicional por um orquestrador Rust (HTTP/3 WebTransport) integrado a um engine frontend em Wasm. Uso de SharedArrayBuffer para multithreading e Edge Computing para replicação.",
+    coreshell_role: "Engenheiro de Software / Arquiteto de Soluções",
+    coreshell_h1: "Sincronização stateful sem conflitos (Zero-Latency) usando CRDTs",
+    coreshell_h2: "Processamento multithread no browser com Wasm e Web Workers",
+    coreshell_h3: "Renderização customizada via Canvas/WebGL para +100.000 pontos a 60FPS",
   },
 
   // ── English ─────────────────────────────────────────────────────
@@ -183,6 +192,14 @@ export const translations = {
     gammaindex_h1: "65% reduction in rework",
     gammaindex_h2: "Integration with 3 legacy systems",
     gammaindex_h3: "200+ users",
+
+    coreshell_desc: "Real-time predictive financial analysis platform based on a Local-First architecture, using WebAssembly on the client and CRDTs on the backend for state convergence.",
+    coreshell_motivation: "Solving the 'Hybrid Global Mesh Paradox': enabling massive distributed processing on the frontend without exposing AI models, maintaining global state consistency with sub-50ms latency.",
+    coreshell_process: "Replacing the traditional client-server model with a Rust orchestrator (HTTP/3 WebTransport) integrated with a Wasm frontend engine. Using SharedArrayBuffer for multithreading and Edge Computing for replication.",
+    coreshell_role: "Software Engineer / Solutions Architect",
+    coreshell_h1: "Conflict-free stateful synchronization (Zero-Latency) using CRDTs",
+    coreshell_h2: "Multithreaded in-browser processing with Wasm and Web Workers",
+    coreshell_h3: "Custom rendering via Canvas/WebGL for 100,000+ points at 60FPS",
   },
 
   // ── Español ──────────────────────────────────────────────────────
@@ -263,6 +280,14 @@ export const translations = {
     gammaindex_h1: "Reducción del 65% en el retrabajo",
     gammaindex_h2: "Integración con 3 sistemas legados",
     gammaindex_h3: "200+ usuarios",
+
+    coreshell_desc: "Plataforma de análisis financiero predictivo en tiempo real basada en arquitectura Local-First, utilizando WebAssembly en el cliente y CRDTs en el backend para la convergencia de estados.",
+    coreshell_motivation: "Resolver el 'Paradoja de la Malla Global Híbrida': permitir el procesamiento distribuido masivo en el frontend sin exponer modelos de IA, manteniendo la consistencia del estado global con una latencia inferior a 50ms.",
+    coreshell_process: "Sustitución del modelo cliente-servidor tradicional por un orquestador Rust (HTTP/3 WebTransport) integrado con un motor frontend en Wasm. Uso de SharedArrayBuffer para multihilo y Edge Computing para la replicación.",
+    coreshell_role: "Ingeniero de Software / Arquitecto de Soluciones",
+    coreshell_h1: "Sincronización de estado sin conflictos (Zero-Latency) mediante CRDTs",
+    coreshell_h2: "Procesamiento multihilo en el navegador con Wasm y Web Workers",
+    coreshell_h3: "Renderizado personalizado mediante Canvas/WebGL para más de 100,000 puntos a 60FPS",
   },
 
   // ── Deutsch ──────────────────────────────────────────────────────
@@ -343,6 +368,14 @@ export const translations = {
     gammaindex_h1: "65% weniger Nacharbeit",
     gammaindex_h2: "Integration mit 3 Legacy-Systemen",
     gammaindex_h3: "200+ Nutzer",
+
+    coreshell_desc: "Echtzeit-Plattform für prädiktive Finanzanalysen basierend auf einer Local-First-Architektur, unter Verwendung von WebAssembly auf dem Client und CRDTs im Backend zur Statuskonvergenz.",
+    coreshell_motivation: "Lösung des 'Hybrid Global Mesh Paradoxon': Massiv verteilte Verarbeitung im Frontend ermöglichen, ohne KI-Modelle offenzulegen, bei gleichzeitiger globaler Statuskonsistenz mit einer Latenz von unter 50ms.",
+    coreshell_process: "Ersetzung des traditionellen Client-Server-Modells durch einen Rust-Orchestrator (HTTP/3 WebTransport), der in eine Wasm-Frontend-Engine integriert ist. Nutzung von SharedArrayBuffer für Multithreading und Edge Computing für die Replikation.",
+    coreshell_role: "Softwareentwickler / Lösungsarchitekt",
+    coreshell_h1: "Konfliktfreie Stateful-Synchronisation (Zero-Latency) mittels CRDTs",
+    coreshell_h2: "Multithreaded-Verarbeitung im Browser mit Wasm und Web Workers",
+    coreshell_h3: "Benutzerdefiniertes Rendering über Canvas/WebGL für über 100.000 Punkte bei 60 FPS",
   },
 
   // ── Français ─────────────────────────────────────────────────────
@@ -423,6 +456,14 @@ export const translations = {
     gammaindex_h1: "Réduction de 65% des retouches",
     gammaindex_h2: "Intégration avec 3 systèmes legacy",
     gammaindex_h3: "200+ utilisateurs",
+
+    coreshell_desc: "Plateforme d'analyse financière prédictive en temps réel basée sur une architecture Local-First, utilisant WebAssembly sur le client et les CRDT sur le backend para la convergence d'état.",
+    coreshell_motivation: "Résoudre le 'Paradoxe du Maillage Global Hybride' : permettre un traitement distribué massif sur le frontend sans exposer les modèles d'IA, tout en maintenant la cohérence de l'état global avec une latence inférieure à 50ms.",
+    coreshell_process: "Remplacement du modèle client-serveur traditionnel par un orchestrateur Rust (HTTP/3 WebTransport) intégré à un moteur frontend en Wasm. Utilisation de SharedArrayBuffer pour le multithreading et de l'Edge Computing pour la réplication.",
+    coreshell_role: "Ingénieur Logiciel / Architecte de Solutions",
+    coreshell_h1: "Synchronisation d'état sans conflit (Zero-Latency) via les CRDT",
+    coreshell_h2: "Traitement multithread dans le navigateur avec Wasm et Web Workers",
+    coreshell_h3: "Rendu personnalisé via Canvas/WebGL pour plus de 100 000 points à 60FPS",
   },
 
   // ── 中文 (Mandarin Simplificado) ─────────────────────────────────
@@ -503,6 +544,14 @@ export const translations = {
     gammaindex_h1: "返工减少65%",
     gammaindex_h2: "与3个遗留系统集成",
     gammaindex_h3: "200+用户",
+
+    coreshell_desc: "基于本地优先 (Local-First) 架构的实时预测性金融分析平台，客户端使用 WebAssembly，后端使用 CRDT 实现状态收敛。",
+    coreshell_motivation: "解决“混合全球网格悖论”：在不暴露 AI 模型的情况下实现前端大规模分布式处理，同时保持低于 50ms 延迟的全球状态一致性。",
+    coreshell_process: "将传统客户端-服务器模型替换为集成 Wasm 前端引擎的 Rust 编排器 (HTTP/3 WebTransport)。使用 SharedArrayBuffer 实现多线程，并利用边缘计算进行复制。",
+    coreshell_role: "软件工程师 / 解决方案架构师",
+    coreshell_h1: "使用 CRDT 实现无冲突的有状态同步（零延迟）",
+    coreshell_h2: "在浏览器中通过 Wasm 和 Web Workers 进行多线程处理",
+    coreshell_h3: "通过 Canvas/WebGL 实现 10万+ 数据点在 60FPS 下的自定义渲染",
   },
 
   // ── 日本語 ────────────────────────────────────────────────────────
@@ -583,6 +632,14 @@ export const translations = {
     gammaindex_h1: "手直しを65%削減",
     gammaindex_h2: "3つのレガシーシステムとの統合",
     gammaindex_h3: "200人以上のユーザー",
+
+    coreshell_desc: "Local-Firstアーキテクチャに基づくリアルタイム予測財務分析プラットフォーム。クライアント側にWebAssembly、バックエンドにCRDTを採用し、状態の収束を実現。",
+    coreshell_motivation: "「ハイブリッド・グローバル・メッシュの逆説」の解決：AIモデルを露出させることなく、フロントエンドでの大規模な分散処理を可能にし、50ms未満のレイテンシでグローバルな状態整合性を維持。",
+    coreshell_process: "従来のクライアント・サーバモデルを、Wasmフロントエンドエンジンと統合されたRustオーケストレーター（HTTP/3 WebTransport）に置き換え。マルチスレッド用のSharedArrayBufferと、レプリケーション用のエッジコンピューティングを活用。",
+    coreshell_role: "ソフトウェアエンジニア / ソリューションアーキテクト",
+    coreshell_h1: "CRDTを使用した衝突のないステートフル同期（ゼロレイテンシ）",
+    coreshell_h2: "WasmとWeb Workersによるブラウザ内マルチスレッド処理",
+    coreshell_h3: "Canvas/WebGLによる10万点以上の60FPSカスタムレンダリング",
   },
 
   visit_casestudy: "ver estudo de caso →",

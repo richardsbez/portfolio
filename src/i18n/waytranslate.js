@@ -126,9 +126,10 @@ export const STACK = [
 // ─────────────────────────────────────────────────────────────────────────────
 const PT = {
   nav: ['contexto', 'latim', 'processo', 'stack', 'conclusão'],
+  navHome: 'Voltar',
 
   hero: {
-    eyebrow: '// ESTUDO DE CASO · RUST · CLI · 2026',
+    eyebrow: '// ESTUDO DE CASO · RUST · CLI ',
     title: ['WAYT', 'RANS', 'LATE'],
     accentLine: 'LATE',
     subtitle:
@@ -279,9 +280,11 @@ const PT = {
 // ─────────────────────────────────────────────────────────────────────────────
 const EN = {
   nav: ['context', 'latin', 'process', 'stack', 'conclusion'],
+  navHome: 'Back',
+
 
   hero: {
-    eyebrow: '// CASE STUDY · RUST · CLI · 2026',
+    eyebrow: '// CASE STUDY · RUST · CLI ',
     title: ['WAYT', 'RANS', 'LATE'],
     accentLine: 'LATE',
     subtitle:
@@ -432,9 +435,10 @@ const EN = {
 // ─────────────────────────────────────────────────────────────────────────────
 const ES = {
   nav: ['contexto', 'latín', 'proceso', 'stack', 'conclusión'],
+  navHome: 'Volver',
 
   hero: {
-    eyebrow: '// CASO DE ESTUDIO · RUST · CLI · 2026',
+    eyebrow: '// CASO DE ESTUDIO · RUST · CLI ',
     title: ['WAYT', 'RANS', 'LATE'],
     accentLine: 'LATE',
     subtitle:
@@ -586,9 +590,10 @@ const ES = {
 //
 const DE = {
   nav: ['kontext', 'latein', 'prozess', 'stack', 'fazit'],
+  navHome: 'Zurück',
 
   hero: {
-    eyebrow: '// FALLSTUDIE · RUST · CLI · 2026',
+    eyebrow: '// FALLSTUDIE · RUST · CLI ',
     title: ['WAYT', 'RANS', 'LATE'],
     accentLine: 'LATE',
     subtitle:
@@ -741,9 +746,10 @@ const DE = {
 // ─────────────────────────────────────────────────────────────────────────────
 const FR = {
   nav: ['contexte', 'latin', 'processus', 'stack', 'conclusion'],
+  navHome: 'Retour',
 
   hero: {
-    eyebrow: '// ÉTUDE DE CAS · RUST · CLI · 2026',
+    eyebrow: '// ÉTUDE DE CAS · RUST · CLI ',
     title: ['WAYT', 'RANS', 'LATE'],
     accentLine: 'LATE',
     subtitle:
@@ -895,9 +901,10 @@ const FR = {
 // ────────────────────────────────────────────────────────────────────────────-
 const ZH = {
   nav: ['背景', '拉丁语', '流程', '技术栈', '结论'],
+  navHome: '返回',
 
   hero: {
-    eyebrow: '// 案例研究 · RUST · CLI · 2026',
+    eyebrow: '// 案例研究 · RUST · CLI ',
     title: ['WAYT', 'RANS', 'LATE'],
     accentLine: 'LATE',
     subtitle:
@@ -1051,9 +1058,10 @@ const ZH = {
 
 const JA = {
   nav: ['背景', 'ラテン語', 'プロセス', 'スタック', '結論'],
+  navHome: '戻る',
 
   hero: {
-    eyebrow: '// ケーススタディ · RUST · CLI · 2026',
+    eyebrow: '// ケーススタディ · RUST · CLI ',
     title: ['WAYT', 'RANS', 'LATE'],
     accentLine: 'LATE',
     subtitle:

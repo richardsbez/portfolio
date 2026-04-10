@@ -131,11 +131,13 @@ export const STACK = [
 // ─────────────────────────────────────────────────────────────────────────────
 const PT = {
   hero: {
-    label: "// estudo_de_caso — 2025",
+    label: "// estudo_de_caso ",
     title: "UltraLearn",
     subtitle: "Um tracker de estudos desktop construído em torno dos 9 princípios do método Ultralearning de Scott Young.",
     tags: ["Electron", "React", "TypeScript", "Canvas Customizado"],
   },
+  navHome: 'Voltar',
+
 
   context: {
     sectionLabel: "01 / Contexto",
@@ -223,11 +225,12 @@ const PT = {
 // ─────────────────────────────────────────────────────────────────────────────
 const EN = {
   hero: {
-    label: "// case_study — 2025",
+    label: "// case_study ",
     title: "UltraLearn",
     subtitle: "A desktop study tracker built around the 9 principles of Scott Young's Ultralearning method.",
     tags: ["Electron", "React", "TypeScript", "Custom Canvas"],
   },
+  navHome: 'Back',
 
   context: {
     sectionLabel: "01 / Context",
@@ -315,11 +318,12 @@ const EN = {
 // ─────────────────────────────────────────────────────────────────────────────
 const ES = {
   hero: {
-    label: "// caso_de_estudio — 2025",
+    label: "// caso_de_estudio ",
     title: "UltraLearn",
     subtitle: "Un tracker de estudios desktop construido en torno a los 9 principios del método Ultralearning de Scott Young.",
     tags: ["Electron", "React", "TypeScript", "Canvas Personalizado"],
   },
+  navHome: 'Volver',
 
   context: {
     sectionLabel: "01 / Contexto",
@@ -408,11 +412,12 @@ const ES = {
 //
 const DE = {
   hero: {
-    label: "// fallstudie — 2025",
+    label: "// fallstudie ",
     title: "UltraLearn",
     subtitle: "Ein Desktop-Studien-Tracker, basierend auf den 9 Prinzipien der Ultralearning-Methode von Scott Young.",
     tags: ["Electron", "React", "TypeScript", "Custom Canvas"],
   },
+  navHome: 'Zurück',
 
   context: {
     sectionLabel: "01 / Kontext",
@@ -501,11 +506,12 @@ const DE = {
 //
 const FR = {
   hero: {
-    label: "// étude_de_cas — 2025",
+    label: "// étude_de_cas ",
     title: "UltraLearn",
     subtitle: "Un tracker d'études desktop conçu autour des 9 principes de la méthode Ultralearning de Scott Young.",
     tags: ["Electron", "React", "TypeScript", "Canvas Personnalisé"],
   },
+  navHome: 'Retour',
 
   context: {
     sectionLabel: "01 / Contexte",
@@ -599,6 +605,7 @@ const ZH = {
     subtitle: "一款围绕 Scott Young 的《超级学习》九大原则构建的桌面端学习追踪工具。",
     tags: ["Electron", "React", "TypeScript", "自定义 Canvas"],
   },
+  navHome: '返回',
 
   context: {
     sectionLabel: "01 / 项目背景",
@@ -686,11 +693,12 @@ const ZH = {
 //
 const JA = {
   hero: {
-    label: "// ケーススタディ — 2025",
+    label: "// ケーススタディ",
     title: "UltraLearn",
     subtitle: "スコット・ヤングの「ウルトララーニング」9つの原則に基づいたデスクトップ学習トラッカー。",
     tags: ["Electron", "React", "TypeScript", "カスタムCanvas"],
   },
+  navHome: '戻る',
 
   context: {
     sectionLabel: "01 / 背景",

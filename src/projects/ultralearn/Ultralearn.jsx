@@ -313,8 +313,8 @@ export default function Ultralearn() {
 
       <nav ref={navRef} className="cs-nav">
         <p className="cs-nav-logo">
-          <a href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-            portfolio<span>.</span>dev
+          <a href="/projects" style={{ textDecoration: 'none', color: 'inherit' }}>
+            {t.navHome}
           </a>
         </p>
         <ul className="cs-nav-links">
@@ -338,7 +338,7 @@ export default function Ultralearn() {
               onClick={() => handleLangChange(code)}
               title={code}
             >
-              {flag}
+              {code}
             </button>
           ))}
         </div>

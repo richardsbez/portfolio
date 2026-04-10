@@ -1,9 +1,7 @@
 /**
- * JSeeker.jsx — Componente principal do Estudo de Caso J-Seeker
+ * JSeeker.jsx — Raw Engineering Manifesto redesign
  * Stack: React 18 · Tailwind CSS · GSAP + ScrollTrigger · Lenis
- *
- * Mesmo padrão arquitetural de WaytranslateCLI.jsx.
- * Acento: laranja-âmbar (#C46B00) em vez do vermelho do WayTranslate.
+ * Aesthetic: Ink black · Lime electric · Bebas Neue · IBM Plex Mono
  */
 
 import { useEffect, useRef, useCallback, useState } from 'react'
@@ -17,58 +15,30 @@ import CASE_DATA, { CASE_LANGS, MARQUEE_ITEMS, STACK } from '../../i18n/jseeker.
 gsap.registerPlugin(ScrollTrigger)
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Helpers
+// Terminal sub-component
 // ─────────────────────────────────────────────────────────────────────────────
-
-/** Parágrafo com marcação *negrito* — fundo claro */
-function RichPara({ text, className }) {
-  const html = text.replace(
-    /\*(.*?)\*/g,
-    '<em style="color:var(--jsk-ink);font-style:normal;font-weight:600">$1</em>'
-  )
-  return <p className={className} dangerouslySetInnerHTML={{ __html: html }} />
-}
-
-/** Parágrafo com marcação *negrito* — fundo escuro (seção arquitetura) */
-function ArchRichPara({ text }) {
-  const html = text.replace(
-    /\*(.*?)\*/g,
-    '<em style="color:rgba(242,235,224,.82);font-style:normal;font-weight:600">$1</em>'
-  )
-  return <p className="jsk-arch-col-body" dangerouslySetInnerHTML={{ __html: html }} />
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-componente: Terminal Widget de busca
-// ─────────────────────────────────────────────────────────────────────────────
-function SearchTerminal({ terminal }) {
+function Terminal({ terminal }) {
   return (
     <div className="jsk-term">
-      {/* Traffic lights */}
       <div className="jsk-term-bar">
         <div className="jsk-td jsk-td-r" />
         <div className="jsk-td jsk-td-y" />
         <div className="jsk-td jsk-td-g" />
-        <span className="jsk-term-title">{terminal.title}</span>
+        <span className="jsk-term-title">j-seeker — zsh</span>
       </div>
 
       <div className="jsk-term-body">
-        {/* Command prompt */}
-        <div style={{ marginBottom: '.5rem' }}>
-          <span className="jsk-tp">❯ </span>
-          <span className="jsk-ti">{terminal.prompt}</span>
-        </div>
+        <span className="jsk-t-prompt">{terminal.prompt}</span>
 
-        {/* Indexing progress */}
-        <div className="jsk-tc" style={{ marginBottom: '.25rem' }}>{terminal.indexing}</div>
-        <div className="jsk-progress-bar-inline" />
+        {terminal.lines.map((line, i) => {
+          if (line.type === 'dim') return <span key={i} className="jsk-t-dim">{line.text}</span>
+          if (line.type === 'progress') return <span key={i} className="jsk-t-prog">{line.text}</span>
+          if (line.type === 'green') return <span key={i} className="jsk-t-green">{line.text}</span>
+          return <span key={i}>{line.text}</span>
+        })}
 
-        {/* Result header */}
-        <div className="jsk-result-header">
-          <span className="jsk-tg">{terminal.resultHeader}</span>
-        </div>
+        <div className="jsk-term-sep" />
 
-        {/* Search results */}
         {terminal.results.map((r, i) => (
           <div key={i} className="jsk-score-row">
             <span className="jsk-score-badge">{r.score}</span>
@@ -76,19 +46,16 @@ function SearchTerminal({ terminal }) {
           </div>
         ))}
 
-        <div style={{ marginTop: '1rem', borderTop: '1px solid rgba(255,255,255,.05)', paddingTop: '.75rem' }}>
-          <span className="jsk-tg">✓ </span>
-          <span className="jsk-dim">{terminal.footer}</span>
-        </div>
+        <div className="jsk-term-footer">{terminal.footer}</div>
       </div>
     </div>
   )
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Sub-componente: Pipeline Diagram
+// Pipeline sub-component
 // ─────────────────────────────────────────────────────────────────────────────
-function PipelineDiagram({ pipeline }) {
+function Pipeline({ pipeline }) {
   const getBoxClass = (i) => {
     if (i === 0) return 'jsk-pipe-box first'
     if (i === pipeline.length - 1) return 'jsk-pipe-box last'
@@ -102,7 +69,7 @@ function PipelineDiagram({ pipeline }) {
         <div key={step.label} style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
           <div className="jsk-pipe-step">
             <div className={getBoxClass(i)}>{step.label}</div>
-            <span className="jsk-pipe-lbl">{step.sub}</span>
+            <span className="jsk-pipe-sub">{step.sub}</span>
           </div>
           {i < pipeline.length - 1 && (
             <div className="jsk-pipe-arr">→</div>
@@ -114,10 +81,10 @@ function PipelineDiagram({ pipeline }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// JSeeker — componente principal
+// JSeeker main component
 // ─────────────────────────────────────────────────────────────────────────────
 export default function JSeeker() {
-  // ── Estado de idioma ───────────────────────────────────────────────────────
+  // ── Language state ─────────────────────────────────────────────────────────
   const [lang, setLang] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('portfolio-lang') ?? 'PT'
@@ -135,16 +102,14 @@ export default function JSeeker() {
 
   // ── Refs ───────────────────────────────────────────────────────────────────
   const rootRef = useRef(null)
-  const cursorRef = useRef(null)
-  const ringRef = useRef(null)
   const progressRef = useRef(null)
   const navRef = useRef(null)
   const lenisRef = useRef(null)
 
-  // ── 1. Lenis smooth scroll ─────────────────────────────────────────────────
+  // ── Lenis smooth scroll ────────────────────────────────────────────────────
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.1,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       smoothWheel: true,
@@ -159,9 +124,7 @@ export default function JSeeker() {
     }
   }, [])
 
-
-
-  // ── 3. Progress bar ────────────────────────────────────────────────────────
+  // ── Progress bar ───────────────────────────────────────────────────────────
   useEffect(() => {
     const bar = progressRef.current
     if (!bar) return
@@ -175,7 +138,7 @@ export default function JSeeker() {
     return () => st.kill()
   }, [])
 
-  // ── 4. Navbar scroll ──────────────────────────────────────────────────────
+  // ── Navbar scroll ──────────────────────────────────────────────────────────
   useEffect(() => {
     const nav = navRef.current
     if (!nav) return
@@ -187,68 +150,67 @@ export default function JSeeker() {
     return () => st.kill()
   }, [])
 
-  // ── 5. Hero entrance ──────────────────────────────────────────────────────
+  // ── Hero entrance ──────────────────────────────────────────────────────────
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.25 })
-        .from('.jsk-badge', { opacity: 0, y: -8, duration: 0.5 })
-        .from('.jsk-hero-eyebrow', { opacity: 0, y: 10, duration: 0.6 }, '-=0.3')
-        .from('.jsk-hero-title', { opacity: 0, y: 70, duration: 1.1 }, '-=0.35')
-        .from('.jsk-hero-sub', { opacity: 0, y: 22, duration: 0.8 }, '-=0.55')
-        .from('.jsk-hero-stats > div', { opacity: 0, y: 20, stagger: 0.1, duration: 0.5 }, '-=0.4')
-        .from('.jsk-hero-r', { opacity: 0, x: 28, duration: 0.9, ease: 'power2.out' }, '-=0.7')
+      gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.2 })
+        .from('.jsk-hero-label', { opacity: 0, y: -10, duration: 0.5 })
+        .from('.jsk-hero-title', { opacity: 0, y: 80, duration: 1.2, ease: 'power4.out' }, '-=0.2')
+        .from('.jsk-hero-kicker', { opacity: 0, y: 20, duration: 0.7 }, '-=0.6')
+        .from('.jsk-hero-stats > div', { opacity: 0, y: 16, stagger: 0.1, duration: 0.5 }, '-=0.4')
+        .from('.jsk-hero-term-wrap', { opacity: 0, x: 30, duration: 0.9, ease: 'power2.out' }, '-=0.8')
     }, rootRef)
     return () => ctx.revert()
   }, [])
 
-  // ── 6. Scroll reveals ─────────────────────────────────────────────────────
+  // ── Scroll reveals ─────────────────────────────────────────────────────────
   useEffect(() => {
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add('vis') }),
-      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0.08, rootMargin: '0px 0px -36px 0px' }
     )
-    document.querySelectorAll('.jsk-rv, .jsk-rv-l').forEach((el, i) => {
-      el.style.transitionDelay = `${(i % 6) * 0.07}s`
+    document.querySelectorAll('.jsk-rv, .jsk-rv-x').forEach((el, i) => {
+      el.style.transitionDelay = `${(i % 7) * 0.065}s`
       io.observe(el)
     })
     return () => io.disconnect()
   }, [lang])
 
-  // ── 7. Stack list reveal ──────────────────────────────────────────────────
+  // ── Stack stagger ──────────────────────────────────────────────────────────
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from('.jsk-s-item', {
-        opacity: 0, y: 18, stagger: 0.07, duration: 0.55, ease: 'power2.out',
-        scrollTrigger: { trigger: '.jsk-stack-list', start: 'top 85%', toggleActions: 'play none none reverse' },
+        opacity: 0, x: -16, stagger: 0.06, duration: 0.5, ease: 'power2.out',
+        scrollTrigger: { trigger: '.jsk-stack-list', start: 'top 88%', toggleActions: 'play none none reverse' },
       })
     }, rootRef)
     return () => ctx.revert()
   }, [])
 
-  // ── 8. Result items ───────────────────────────────────────────────────────
+  // ── Conclusion results stagger ─────────────────────────────────────────────
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from('.jsk-r-item', {
-        opacity: 0, x: -18, stagger: 0.1, duration: 0.55, ease: 'power2.out',
-        scrollTrigger: { trigger: '.jsk-res-list', start: 'top 88%', toggleActions: 'play none none reverse' },
+        opacity: 0, x: -16, stagger: 0.09, duration: 0.5, ease: 'power2.out',
+        scrollTrigger: { trigger: '.jsk-res-list', start: 'top 90%', toggleActions: 'play none none reverse' },
       })
     }, rootRef)
     return () => ctx.revert()
   }, [])
 
-  // ── 9. Metric counter animation ───────────────────────────────────────────
+  // ── Metric cards ───────────────────────────────────────────────────────────
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from('.jsk-metric-card', {
-        opacity: 0, scale: 0.9, y: 20, stagger: 0.1, duration: 0.6, ease: 'back.out(1.4)',
-        scrollTrigger: { trigger: '.jsk-metrics', start: 'top 85%', toggleActions: 'play none none reverse' },
+        opacity: 0, scale: 0.92, y: 16, stagger: 0.09, duration: 0.55, ease: 'back.out(1.5)',
+        scrollTrigger: { trigger: '.jsk-metrics-grid', start: 'top 88%', toggleActions: 'play none none reverse' },
       })
     }, rootRef)
     return () => ctx.revert()
   }, [])
 
   const scrollTo = useCallback((id) => {
-    lenisRef.current?.scrollTo(`#${id}`, { offset: -70, duration: 1.4 })
+    lenisRef.current?.scrollTo(`#${id}`, { offset: -60, duration: 1.3 })
   }, [])
 
   const NAV_IDS = ['motivacao', 'arquitetura', 'processo', 'stack', 'conclusao']
@@ -256,17 +218,15 @@ export default function JSeeker() {
   // ── RENDER ─────────────────────────────────────────────────────────────────
   return (
     <div ref={rootRef} className="jsk-root">
-      <div ref={cursorRef} className="jsk-cursor" />
-      <div ref={ringRef} className="jsk-cursor-ring" />
       <div ref={progressRef} className="jsk-progress" />
 
-      {/* ════════════════════════════════════════
-          NAV
-      ════════════════════════════════════════ */}
+      {/* ════════════════════ NAV ════════════════════ */}
       <nav ref={navRef} className="jsk-nav">
-        <a className="jsk-nav-logo" href="/">
-          portfolio<span>.</span>dev
-        </a>
+        <p className="jsk-nav-logo">
+          <a href="/projects" style={{ textDecoration: 'none', color: 'inherit' }}>
+            {t.navHome}
+          </a>
+        </p>
 
         <ul className="jsk-nav-links">
           {t.nav.map((label, i) => (
@@ -289,58 +249,46 @@ export default function JSeeker() {
               onClick={() => handleLangChange(code)}
               title={code}
             >
-              {flag} {code}
+              {code}
             </button>
           ))}
         </div>
       </nav>
 
-      {/* ════════════════════════════════════════
-          HERO
-      ════════════════════════════════════════ */}
+      {/* ════════════════════ HERO ════════════════════ */}
       <section className="jsk-hero">
-
-        {/* Left — parchment */}
-        <div className="jsk-hero-l">
+        <div className="jsk-hero-inner">
           <div>
-            {/* Badge pessoal + profissional */}
-            <div className="jsk-badge">pessoal + prof</div>
-
-            <p className="jsk-hero-eyebrow">{t.hero.eyebrow}</p>
-
+            <p className="jsk-hero-label">{t.hero.label}</p>
             <h1 className="jsk-hero-title">
-              {t.hero.title.map((line, i) =>
-                line === t.hero.accentLine
-                  ? <span key={i}>{line.slice(0, -3)}<span className="accent">{line.slice(-3)}</span><br /></span>
-                  : <span key={i}>{line}<br /></span>
-              )}
+              {t.hero.title.map((line, i) => (
+                <span key={i}>
+                  {line === t.hero.accentLine
+                    ? <><span style={{ color: 'var(--lime)' }}>{line}</span><br /></>
+                    : <>{line}<br /></>
+                  }
+                </span>
+              ))}
             </h1>
-
-            <p className="jsk-hero-sub">{t.hero.subtitle}</p>
+            <p className="jsk-hero-kicker">{t.hero.kicker}</p>
           </div>
 
-          <div className="jsk-hero-stats">
-            {t.hero.stats.map((s) => (
-              <div key={s.label}>
-                <p className={`jsk-stat-value${/[a-zA-Z~<]/.test(s.value) ? ' small' : ''}`}>
-                  {s.value}
-                </p>
-                <p className="jsk-stat-label">{s.label}</p>
-              </div>
-            ))}
+          <div className="jsk-hero-term-wrap">
+            <Terminal terminal={t.hero.terminal} />
           </div>
         </div>
 
-        {/* Right — dark terminal panel */}
-        <div className="jsk-hero-r">
-          <SearchTerminal terminal={t.hero.terminal} />
-          <p className="jsk-term-label">{t.hero.termLabel}</p>
+        <div className="jsk-hero-stats">
+          {t.hero.stats.map((s) => (
+            <div key={s.label}>
+              <p className="jsk-hero-stat-val">{s.value}</p>
+              <p className="jsk-hero-stat-label">{s.label}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* ════════════════════════════════════════
-          MARQUEE
-      ════════════════════════════════════════ */}
+      {/* ════════════════════ MARQUEE ════════════════════ */}
       <div className="jsk-mq-wrap">
         <div className="jsk-mq-track">
           {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
@@ -351,99 +299,89 @@ export default function JSeeker() {
         </div>
       </div>
 
-      {/* ════════════════════════════════════════
-          CONTEXT / MOTIVAÇÃO
-      ════════════════════════════════════════ */}
-      <section className="jsk-sec" id="motivacao">
-        <p className="jsk-sec-label">{t.context.sectionLabel}</p>
+      {/* ════════════════════ CONTEXT / MOTIVAÇÃO ════════════════════ */}
+      <section className="jsk-section" id="motivacao">
+        <p className="jsk-section-label">{t.context.label}</p>
         <h2 className="jsk-heading jsk-rv">{t.context.heading}</h2>
 
-        <div className="jsk-ctx-grid">
-          <div className="jsk-rv">
-            <RichPara text={t.context.paragraphs[0]} className="jsk-body" />
-            <RichPara text={t.context.paragraphs[1]} className="jsk-body" />
+        <div className="jsk-ctx-layout">
+          <div>
+            <p className="jsk-pull-q jsk-rv-x">{t.context.quote}</p>
+            <div className="jsk-metrics-grid jsk-rv">
+              {t.context.metrics.map((m) => (
+                <div key={m.label} className="jsk-metric-card">
+                  <p className={`jsk-metric-val${/[a-zA-Z~<]/.test(m.value) ? ' sm' : ''}`}>
+                    {m.value}
+                  </p>
+                  <p className="jsk-metric-lbl">{m.label}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="jsk-rv">
-            <RichPara text={t.context.paragraphs[2]} className="jsk-body" />
-            <RichPara text={t.context.paragraphs[3]} className="jsk-body" />
+
+          <div>
+            {t.context.body.map((p, i) => (
+              <p key={i} className="jsk-body-text jsk-rv">{p}</p>
+            ))}
           </div>
         </div>
+      </section>
 
-        <blockquote className="jsk-pull-q jsk-rv">{t.context.pullQuote}</blockquote>
+      {/* ════════════════════ ARCHITECTURE ════════════════════ */}
+      <section className="jsk-arch-sec" id="arquitetura">
+        <div className="jsk-section">
+          <p className="jsk-section-label">{t.arch.label}</p>
+          <h2 className="jsk-heading jsk-rv">{t.arch.heading}</h2>
 
-        <div className="jsk-metrics jsk-rv">
-          {t.context.metrics.map((m) => (
-            <div key={m.label} className="jsk-metric-card">
-              <p className={`jsk-metric-val${/[a-zA-Z~<]/.test(m.value) ? ' small' : ''}`}>
-                {m.value}
-              </p>
-              <p className="jsk-metric-lbl">{m.label}</p>
+          <div className="jsk-arch-layout">
+            <div>
+              {t.arch.cols.map((col, i) => (
+                <div key={i} className="jsk-rv">
+                  <p className="jsk-arch-card-title">{col.title}</p>
+                  <p className="jsk-arch-body">{col.body}</p>
+                </div>
+              ))}
+            </div>
+
+            <div>
+              <Pipeline pipeline={t.arch.pipeline} />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════ PROCESS ════════════════════ */}
+      <section className="jsk-section" id="processo">
+        <p className="jsk-section-label">{t.process.label}</p>
+        <h2 className="jsk-heading jsk-rv">{t.process.heading}</h2>
+
+        <div className="jsk-proc-grid">
+          {t.process.cards.map((card) => (
+            <div key={card.num} className="jsk-proc-card jsk-rv">
+              <span className="jsk-proc-num-bg">{card.num}</span>
+
+              <div className="jsk-proc-tag">{card.tag}</div>
+              <h3 className="jsk-proc-title">{card.title}</h3>
+              <p className="jsk-proc-body">{card.body}</p>
+
+              <div className="jsk-pbox ch">
+                <p className="jsk-pbox-label">{card.challengeLabel}</p>
+                <p className="jsk-pbox-text">{card.challenge}</p>
+              </div>
+              <div className="jsk-pbox dc">
+                <p className="jsk-pbox-label">{card.decisionLabel}</p>
+                <p className="jsk-pbox-text">{card.decision}</p>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ════════════════════════════════════════
-          ARCHITECTURE — dark section
-      ════════════════════════════════════════ */}
-      <section className="jsk-arch-sec" id="arquitetura">
-        <div className="jsk-arch-inner">
-          <p className="jsk-a-sec-label">{t.arch.sectionLabel}</p>
-
-          <blockquote className="jsk-arch-quote jsk-rv-l">{t.arch.quote}</blockquote>
-          <p className="jsk-arch-xlat">{t.arch.quoteTranslation}</p>
-
-          <PipelineDiagram pipeline={t.arch.pipeline} />
-
-          <div className="jsk-arch-cols">
-            {t.arch.cols.map((col, i) => (
-              <div key={i} className="jsk-rv">
-                <ArchRichPara text={col.body} />
-                <ArchRichPara text={col.body2} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════
-          PROCESS
-      ════════════════════════════════════════ */}
-      <div className="jsk-proc-wrap" id="processo">
-        <div className="jsk-proc-inner">
-          <p className="jsk-sec-label">{t.process.sectionLabel}</p>
-          <h2 className="jsk-heading jsk-rv">{t.process.heading}</h2>
-
-          <div className="jsk-proc-grid">
-            {t.process.cards.map((card) => (
-              <div key={card.num} className="jsk-proc-card jsk-rv">
-                <div className="jsk-proc-num">{card.num}</div>
-                <p className="jsk-proc-phase">{card.phase}</p>
-                <h3 className="jsk-proc-title">{card.title}</h3>
-                <p className="jsk-proc-body">{card.body}</p>
-
-                <div className="jsk-pbox ch">
-                  <p className="jsk-pbox-label">{card.challengeLabel}</p>
-                  <p className="jsk-pbox-text">{card.challenge}</p>
-                </div>
-
-                <div className="jsk-pbox dc">
-                  <p className="jsk-pbox-label">{card.decisionLabel}</p>
-                  <p className="jsk-pbox-text">{card.decision}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ════════════════════════════════════════
-          STACK
-      ════════════════════════════════════════ */}
+      {/* ════════════════════ STACK ════════════════════ */}
       <section className="jsk-stack-sec" id="stack">
-        <div className="jsk-stack-inner">
-          <p className="jsk-stack-sec-label">{t.stack.sectionLabel}</p>
-          <h2 className="jsk-stack-heading jsk-rv">{t.stack.heading}</h2>
+        <div className="jsk-section">
+          <p className="jsk-section-label">{t.stack.label}</p>
+          <h2 className="jsk-heading jsk-rv">{t.stack.heading}</h2>
           <p className="jsk-stack-sub">{t.stack.sub}</p>
 
           <div className="jsk-stack-list">
@@ -452,6 +390,7 @@ export default function JSeeker() {
                 <span className="jsk-s-num">{item.num}</span>
                 <span className="jsk-s-name">{item.name}</span>
                 <span className="jsk-s-role">{item.role[lang] ?? item.role['PT']}</span>
+                <span className="jsk-s-tag">{item.tag}</span>
                 <span className="jsk-s-icon">{item.icon}</span>
               </div>
             ))}
@@ -459,46 +398,44 @@ export default function JSeeker() {
         </div>
       </section>
 
-      {/* ════════════════════════════════════════
-          CONCLUSION
-      ════════════════════════════════════════ */}
-      <section className="jsk-sec" id="conclusao">
-        <p className="jsk-sec-label">{t.conclusion.sectionLabel}</p>
+      {/* ════════════════════ CONCLUSION ════════════════════ */}
+      <section className="jsk-section" id="conclusao">
+        <p className="jsk-section-label">{t.conclusion.label}</p>
         <h2 className="jsk-heading jsk-rv">{t.conclusion.heading}</h2>
 
-        <div style={{ maxWidth: '620px' }}>
-          {t.conclusion.paragraphs.map((p, i) => (
-            <p key={i} className="jsk-body jsk-rv">{p}</p>
-          ))}
-        </div>
+        <div className="jsk-concl-layout">
+          <div>
+            {t.conclusion.body.map((p, i) => (
+              <p key={i} className="jsk-body-text jsk-rv">{p}</p>
+            ))}
 
-        <div className="jsk-res-list">
-          {t.conclusion.results.map((r, i) => (
-            <div key={i} className="jsk-r-item">
-              <span className="jsk-r-chk">✓</span>
-              {r}
+            <div className="jsk-cta-row jsk-rv">
+              <a
+                href="https://github.com/richardsbez"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="jsk-btn jsk-btn-primary"
+              >
+                {t.conclusion.repoLabel}
+              </a>
+              <a href="/projects" className="jsk-btn jsk-btn-ghost">
+                {t.conclusion.backLabel}
+              </a>
             </div>
-          ))}
-        </div>
+          </div>
 
-        <div className="jsk-cta-row jsk-rv">
-          <a
-            href="https://github.com/richardsbez"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="jsk-btn jsk-btn-primary"
-          >
-            {t.conclusion.repoLabel}
-          </a>
-          <a href="/projects" className="jsk-btn jsk-btn-ghost">
-            {t.conclusion.backLabel}
-          </a>
+          <div className="jsk-res-list">
+            {t.conclusion.results.map((r, i) => (
+              <div key={i} className="jsk-r-item">
+                <span className="jsk-r-chk">✓</span>
+                {r}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════
-          FOOTER
-      ════════════════════════════════════════ */}
+      {/* ════════════════════ FOOTER ════════════════════ */}
       <footer className="jsk-footer">
         <span>{t.footer}</span>
         <span>MIT © 2026</span>

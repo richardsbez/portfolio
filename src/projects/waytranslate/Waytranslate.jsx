@@ -228,32 +228,7 @@ export default function WaytranslateCLI() {
     }
   }, [])
 
-  // ── 2. Cursor customizado ──────────────────────────────────────────────────
-  useEffect(() => {
-    const cursor = cursorRef.current
-    const ring = ringRef.current
-    if (!cursor || !ring) return
 
-    const setX = gsap.quickSetter(cursor, 'x', 'px')
-    const setY = gsap.quickSetter(cursor, 'y', 'px')
-
-    const onMove = (e) => {
-      setX(e.clientX)
-      setY(e.clientY)
-      gsap.to(ring, { x: e.clientX, y: e.clientY, duration: 0.35, ease: 'power2.out' })
-    }
-
-    const addHover = () => ring.classList.add('hovering')
-    const rmHover = () => ring.classList.remove('hovering')
-
-    document.addEventListener('mousemove', onMove)
-    document.querySelectorAll('a, button, .wtc-metric-card, .wtc-proc-card, .wtc-s-item').forEach((el) => {
-      el.addEventListener('mouseenter', addHover)
-      el.addEventListener('mouseleave', rmHover)
-    })
-
-    return () => document.removeEventListener('mousemove', onMove)
-  }, [])
 
   // ── 3. Progress bar ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -351,9 +326,11 @@ export default function WaytranslateCLI() {
           NAV
       ════════════════════════════════════════ */}
       <nav ref={navRef} className="wtc-nav">
-        <a className="wtc-nav-logo" href="/">
-          portfolio<span>.</span>dev
-        </a>
+        <p className="wtc-nav-logo">
+          <a href="/projects" style={{ textDecoration: 'none', color: 'inherit' }}>
+            {t.navHome}
+          </a>
+        </p>
 
         <ul className="wtc-nav-links">
           {t.nav.map((label, i) => (
@@ -376,7 +353,7 @@ export default function WaytranslateCLI() {
               onClick={() => handleLangChange(code)}
               title={code}
             >
-              {flag} {code}
+              {code}
             </button>
           ))}
         </div>

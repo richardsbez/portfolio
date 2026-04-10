@@ -135,19 +135,19 @@ const THEME_VARS = [
 const PROJECTS = [
   {
     id: "01",
-    name: "J-Seeker",
-    metrics: ["80k docs/s", "Zero I/O bloqueante", "Java 21 Virtual Threads"],
+    name: "ayrCore tech",
+    metrics: ["Perf. 100 Lighthouse", "GSAP + Lenis", "Firebase realtime"],
     type: "ambos",
     year: "",
-    stack: ["Java 21", "Virtual Threads", "NIO", "Data Structures"],
-    descKey: "jseeker_desc",
-    url: "/projects/jseeker/",
-    status: "concluído",
+    stack: ["React", "Node.js", "TypeScript", "gsap", "Lenis", "Tailwind CSS", "Firebase"],
+    descKey: "ayrcore_desc",
+    url: "https://www.ayrcoretech.com/en-US",
+    status: "ativo",
     details: {
-      motivationKey: "jseeker_motivation",
-      processKey: "jseeker_process",
-      roleKey: "jseeker_role",
-      highlightKeys: ["jseeker_h1", "jseeker_h2", "jseeker_h3"],
+      motivationKey: "ayrcore_motivation",
+      processKey: "ayrcore_process",
+      roleKey: "ayrcore_role",
+      highlightKeys: ["ayrcore_h1", "ayrcore_h2", "ayrcore_h3"],
     },
   },
   {
@@ -169,6 +169,23 @@ const PROJECTS = [
   },
   {
     id: "03",
+    name: "Core-Shell Mesh",
+    metrics: ["Latência sub-50ms", "100k+ pontos a 60FPS", "Convergência CRDT"],
+    type: "ambos",
+    year: "",
+    stack: ["Rust", "Wasm", "WebTransport", "CRDTs", "WebGL"],
+    descKey: "coreshell_desc",
+    url: "/projects/projectcoreshelll",
+    status: "concluído",
+    details: {
+      motivationKey: "coreshell_motivation",
+      processKey: "coreshell_process",
+      roleKey: "coreshell_role",
+      highlightKeys: ["coreshell_h1", "coreshell_h2", "coreshell_h3"],
+    },
+  },
+  {
+    id: "04",
     name: "Waytranslate",
     metrics: ["~40 idiomas", "Async Rust", "Self-hosted"],
     type: "pessoal",
@@ -185,24 +202,24 @@ const PROJECTS = [
     },
   },
   {
-    id: "04",
-    name: "ayrCore tech",
-    metrics: ["Perf. 100 Lighthouse", "GSAP + Lenis", "Firebase realtime"],
+    id: "05",
+    name: "J-Seeker",
+    metrics: ["80k docs/s", "Zero I/O bloqueante", "Java 21 Virtual Threads"],
     type: "ambos",
     year: "",
-    stack: ["React", "Node.js", "TypeScript", "gsap", "Lenis", "Tailwind CSS", "Firebase"],
-    descKey: "ayrcore_desc",
-    url: "https://www.ayrcoretech.com/en-US",
-    status: "ativo",
+    stack: ["Java 21", "Virtual Threads", "NIO", "Data Structures"],
+    descKey: "jseeker_desc",
+    url: "/projects/jseeker/",
+    status: "concluído",
     details: {
-      motivationKey: "ayrcore_motivation",
-      processKey: "ayrcore_process",
-      roleKey: "ayrcore_role",
-      highlightKeys: ["ayrcore_h1", "ayrcore_h2", "ayrcore_h3"],
+      motivationKey: "jseeker_motivation",
+      processKey: "jseeker_process",
+      roleKey: "jseeker_role",
+      highlightKeys: ["jseeker_h1", "jseeker_h2", "jseeker_h3"],
     },
   },
   {
-    id: "05",
+    id: "06",
     name: "SulExpress",
     metrics: ["REST + JWT", "< 50 ms p95", "CRUD completo"],
     type: "ambos",
@@ -219,7 +236,7 @@ const PROJECTS = [
     },
   },
   {
-    id: "06",
+    id: "07",
     name: "GammaIndex",
     metrics: [".NET 8", "Azure Cloud", "Relatórios PDF"],
     type: "profissional",
@@ -258,8 +275,8 @@ const STATUS_LABEL = {
 
 /** Row individual de projeto com acessibilidade e sem bug no <a> */
 function ProjectRow({ p, isOpen, onToggle }) {
-  const typeInfo = TYPE_LABEL[p.type];
-  const statusInfo = STATUS_LABEL[p.status];
+  const typeInfo = TYPE_LABEL[p.type] ?? { labelKey: p.type, cls: "tag--fog" };
+  const statusInfo = STATUS_LABEL[p.status] ?? { labelKey: p.status, cls: "st--done" };
 
   /** Acessibilidade: abre/fecha com Enter ou Espaço */
   const handleKeyDown = useCallback(

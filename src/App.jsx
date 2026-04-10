@@ -9,6 +9,7 @@ import Projects from "./projects/Projects.jsx";
 import Ultralearn from './projects/ultralearn/Ultralearn.jsx';
 import Waytrasnslate from './projects/waytranslate/Waytranslate.jsx';
 import JSeeker from './projects/jseeker/JSeeker.jsx';
+import Projectcoreshelll from './projects/projectcoreshelll/Projectcoreshelll.jsx';
 
 import "./App.css";
 import DATA, { LANGS, SKILLS } from "./i18n/index.js";
@@ -718,6 +719,7 @@ export default function App() {
         <Route path="/projects/ultralearn" element={<Ultralearn />} />
         <Route path="/projects/waytranslate" element={<Waytrasnslate />} />
         <Route path="/projects/jseeker" element={<JSeeker />} />
+        <Route path="/projects/projectcoreshelll" element={<Projectcoreshelll />} />
       </Routes>
     </>
   );
