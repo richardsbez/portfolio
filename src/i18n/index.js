@@ -8,9 +8,9 @@ const PT = {
   prof: {
     ey: "profissional",
     rows: [
-      { k: "Currículo", v: "ver →", em: true, href: "/resume" },
+      { k: "Currículo", v: "ver →", em: false, href: "/resume" },
       { k: "GitHub", v: "@richardsbez", em: false, href: "https://github.com/richardsbez" },
-      { k: "LinkedIn", v: "conectar →", em: true, href: "https://linkedin.com/in/richardsbezerra" },
+      { k: "LinkedIn", v: "conectar →", em: false, href: "https://linkedin.com/in/richardsbezerra" },
       { k: "Startup", v: "ayrCore tech", em: false, href: "https://www.ayrcoretech.com/pt-BR" },
     ],
   },
@@ -47,9 +47,9 @@ const EN = {
   prof: {
     ey: "professional",
     rows: [
-      { k: "Resume", v: "view →", em: true, href: "/resume" },
+      { k: "Resume", v: "view →", em: false, href: "/resume" },
       { k: "GitHub", v: "@richardsbez", em: false, href: "https://github.com/richardsbez" },
-      { k: "LinkedIn", v: "connect →", em: true, href: "https://linkedin.com/in/richardsbezerra" },
+      { k: "LinkedIn", v: "connect →", em: false, href: "https://linkedin.com/in/richardsbezerra" },
       { k: "Startup", v: "ayrCore tech", em: false, href: "https://www.ayrcoretech.com/en-US" },
     ],
   },
@@ -86,9 +86,9 @@ const ES = {
   prof: {
     ey: "profesional",
     rows: [
-      { k: "Currículum", v: "ver →", em: true, href: "/resume" },
+      { k: "Currículum", v: "ver →", em: false, href: "/resume" },
       { k: "GitHub", v: "@richardsbez", em: false, href: "https://github.com/richardsbez" },
-      { k: "LinkedIn", v: "conectar →", em: true, href: "https://linkedin.com/in/richardsbezerra" },
+      { k: "LinkedIn", v: "conectar →", em: false, href: "https://linkedin.com/in/richardsbezerra" },
       { k: "Startup", v: "ayrCore tech", em: false, href: "https://www.ayrcoretech.com/es-ES" },
     ],
   },
@@ -125,9 +125,9 @@ const DE = {
   prof: {
     ey: "beruflich",
     rows: [
-      { k: "Lebenslauf", v: "ansehen →", em: true, href: "/resume" },
+      { k: "Lebenslauf", v: "ansehen →", em: false, href: "/resume" },
       { k: "GitHub", v: "@richardsbez", em: false, href: "https://github.com/richardsbez" },
-      { k: "LinkedIn", v: "vernetzen →", em: true, href: "https://linkedin.com/in/richardsbezerra" },
+      { k: "LinkedIn", v: "vernetzen →", em: false, href: "https://linkedin.com/in/richardsbezerra" },
       { k: "Startup", v: "ayrCore tech", em: false, href: "https://www.ayrcoretech.com/de-DE" },
     ],
   },
@@ -164,9 +164,9 @@ const FR = {
   prof: {
     ey: "professionnel",
     rows: [
-      { k: "CV", v: "voir →", em: true, href: "/resume" },
+      { k: "CV", v: "voir →", em: false, href: "/resume" },
       { k: "GitHub", v: "richardsbez", em: false, href: "https://github.com/richardsbez" },
-      { k: "LinkedIn", v: "se connecter →", em: true, href: "https://linkedin.com/in/richardsbezerra" },
+      { k: "LinkedIn", v: "se connecter →", em: false, href: "https://linkedin.com/in/richardsbezerra" },
       { k: "Startup", v: "ayrCore tech", em: false, href: "https://www.ayrcoretech.com/fr-FR" },
     ],
   },
@@ -203,9 +203,9 @@ const ZH = {
   prof: {
     ey: "职业",
     rows: [
-      { k: "简历", v: "查看 →", em: true, href: "/resume" },
+      { k: "简历", v: "查看 →", em: false, href: "/resume" },
       { k: "GitHub", v: "@richardsbez", em: false, href: "https://github.com/richardsbez" },
-      { k: "LinkedIn", v: "联系 →", em: true, href: "https://linkedin.com/in/richardsbezerra" },
+      { k: "LinkedIn", v: "联系 →", em: false, href: "https://linkedin.com/in/richardsbezerra" },
       { k: "创业项目", v: "ayrCore tech", em: false, href: "https://www.ayrcoretech.com/zh-CN" },
     ],
   },
@@ -242,9 +242,9 @@ const JA = {
   prof: {
     ey: "プロフィール",
     rows: [
-      { k: "履歴書", v: "見る →", em: true, href: "/resume" },
+      { k: "履歴書", v: "見る →", em: false, href: "/resume" },
       { k: "GitHub", v: "@richardsbez", em: false, href: "https://github.com/richardsbez" },
-      { k: "LinkedIn", v: "つながる →", em: true, href: "https://linkedin.com/in/richardsbezerra" },
+      { k: "LinkedIn", v: "つながる →", em: false, href: "https://linkedin.com/in/richardsbezerra" },
       { k: "スタートアップ", v: "ayrCore tech", em: false, href: "https://www.ayrcoretech.com/ja-JP" },
     ],
   },
