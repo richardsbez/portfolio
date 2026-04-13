@@ -17,7 +17,14 @@ import Row from "./components/Row.jsx";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/* ── HELPERS ── */
+const isTouch = () =>
+  typeof window !== "undefined" &&
+  (window.matchMedia("(hover: none) and (pointer: coarse)").matches ||
+    "ontouchstart" in window);
 
+const isMobile = () =>
+  typeof window !== "undefined" && window.innerWidth <= 960;
 
 /* ── CUSTOM CURSOR ── */
 function Cursor() {
@@ -25,6 +32,9 @@ function Cursor() {
   const ringRef = useRef(null);
 
   useEffect(() => {
+    // Don't run on touch-only devices
+    if (isTouch()) return;
+
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
@@ -32,7 +42,7 @@ function Cursor() {
     let mx = window.innerWidth / 2, my = window.innerHeight / 2;
     let rx = mx, ry = my;
     let rafId;
-    let moved = false; // ← rastreia se teve movimento
+    let moved = false;
 
     const onMove = (e) => {
       mx = e.clientX;
@@ -43,19 +53,10 @@ function Cursor() {
 
     const lerp = () => {
       rafId = requestAnimationFrame(lerp);
-
-      // ── Só trabalha se teve movimento ──
       if (!moved) return;
-
       const dx = mx - rx;
       const dy = my - ry;
-
-      // ── Para o update quando chegou perto o suficiente ──
-      if (Math.abs(dx) < 0.1 && Math.abs(dy) < 0.1) {
-        moved = false;
-        return;
-      }
-
+      if (Math.abs(dx) < 0.1 && Math.abs(dy) < 0.1) { moved = false; return; }
       rx += dx * 0.1;
       ry += dy * 0.1;
       ring.style.transform = `translate(${rx - 20}px, ${ry - 20}px)`;
@@ -64,15 +65,13 @@ function Cursor() {
     const onEnter = () => ring.classList.add("cursor-ring--hover");
     const onLeave = () => ring.classList.remove("cursor-ring--hover");
 
-    document.addEventListener("mousemove", onMove, { passive: true }); // ← passive
+    document.addEventListener("mousemove", onMove, { passive: true });
     rafId = requestAnimationFrame(lerp);
 
-    // ── Usar MutationObserver em vez de attachListeners uma vez só ──
     const attachTo = (el) => {
       el.addEventListener("mouseenter", onEnter);
       el.addEventListener("mouseleave", onLeave);
     };
-
     document.querySelectorAll("a, button, [data-cursor]").forEach(attachTo);
 
     const mo = new MutationObserver(() => {
@@ -87,6 +86,9 @@ function Cursor() {
     };
   }, []);
 
+  // Hide on touch devices
+  if (isTouch()) return null;
+
   return (
     <>
       <div ref={dotRef} className="cursor-dot" />
@@ -94,6 +96,7 @@ function Cursor() {
     </>
   );
 }
+
 /* ── TICKER ── */
 function Ticker({ items, dark = false, speed = 22 }) {
   const doubled = [...items, ...items, ...items, ...items];
@@ -121,10 +124,9 @@ function HalfScene({ isRight = false }) {
     const SIZE = box.clientWidth || 480;
     let renderer, raf, isVisible = true;
 
-    // ── Criar renderer direto, sem nested rAF ──
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, stencil: true });
     renderer.setSize(SIZE, SIZE);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // era 2
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.setClearColor(0x000000, 0);
     renderer.localClippingEnabled = true;
     box.appendChild(renderer.domElement);
@@ -138,9 +140,8 @@ function HalfScene({ isRight = false }) {
       0
     );
 
-    // ── Geometria reduzida: 200×32 → 120×20 ──
     const knotGeom = new THREE.TorusKnotGeometry(1.2, 0.38, 120, 20, 2, 3);
-    const ringGeom = new THREE.TorusGeometry(1.65, 0.007, 8, 64); // era 80
+    const ringGeom = new THREE.TorusGeometry(1.65, 0.007, 8, 64);
 
     const group = new THREE.Group();
     scene.add(group);
@@ -148,8 +149,7 @@ function HalfScene({ isRight = false }) {
     const mBack = new THREE.MeshBasicMaterial({
       side: THREE.BackSide,
       clippingPlanes: [clipPlane],
-      depthWrite: false,
-      colorWrite: false,
+      depthWrite: false, colorWrite: false,
       stencilWrite: true,
       stencilFunc: THREE.AlwaysStencilFunc,
       stencilFail: THREE.KeepStencilOp,
@@ -163,8 +163,7 @@ function HalfScene({ isRight = false }) {
     const mFront = new THREE.MeshBasicMaterial({
       side: THREE.FrontSide,
       clippingPlanes: [clipPlane],
-      depthWrite: false,
-      colorWrite: false,
+      depthWrite: false, colorWrite: false,
       stencilWrite: true,
       stencilFunc: THREE.AlwaysStencilFunc,
       stencilFail: THREE.KeepStencilOp,
@@ -176,9 +175,7 @@ function HalfScene({ isRight = false }) {
     group.add(meshFront);
 
     const wire = new THREE.Mesh(knotGeom, new THREE.MeshBasicMaterial({
-      color: 0x18150F,
-      wireframe: true,
-      clippingPlanes: [clipPlane],
+      color: 0x18150F, wireframe: true, clippingPlanes: [clipPlane],
     }));
     wire.renderOrder = 2;
     group.add(wire);
@@ -186,10 +183,8 @@ function HalfScene({ isRight = false }) {
     const capGeom = new THREE.PlaneGeometry(10, 10);
     capGeom.rotateY(Math.PI / 2);
     const cap = new THREE.Mesh(capGeom, new THREE.MeshBasicMaterial({
-      color: 0xE5430A,
-      depthWrite: false,
-      stencilWrite: true,
-      stencilRef: 0,
+      color: 0xE5430A, depthWrite: false,
+      stencilWrite: true, stencilRef: 0,
       stencilFunc: THREE.NotEqualStencilFunc,
       stencilFail: THREE.ZeroStencilOp,
       stencilZFail: THREE.ZeroStencilOp,
@@ -199,13 +194,11 @@ function HalfScene({ isRight = false }) {
     scene.add(cap);
 
     const ring = new THREE.Mesh(ringGeom, new THREE.MeshBasicMaterial({
-      color: 0xE5430A,
-      clippingPlanes: [clipPlane],
+      color: 0xE5430A, clippingPlanes: [clipPlane],
     }));
     ring.renderOrder = 2;
     scene.add(ring);
 
-    // ── Partículas reduzidas: 200 → 120 ──
     const pts = [];
     for (let i = 0; i < 120; i++) {
       const θ = Math.random() * Math.PI * 2;
@@ -230,16 +223,26 @@ function HalfScene({ isRight = false }) {
     };
     raf = requestAnimationFrame(tick);
 
-    // ── Pausar RAF quando fora da viewport ──
     const io = new IntersectionObserver(
       ([entry]) => { isVisible = entry.isIntersecting; },
       { threshold: 0 }
     );
     io.observe(box);
 
+    // Handle resize (e.g. orientation change)
+    const onResize = () => {
+      const sz = box.clientWidth;
+      if (sz && sz !== renderer.domElement.width) {
+        renderer.setSize(sz, sz);
+        cam.updateProjectionMatrix();
+      }
+    };
+    window.addEventListener("resize", onResize, { passive: true });
+
     return () => {
       cancelAnimationFrame(raf);
       io.disconnect();
+      window.removeEventListener("resize", onResize);
       knotGeom.dispose();
       ringGeom.dispose();
       capGeom.dispose();
@@ -289,19 +292,15 @@ function ScrambleName() {
         else res2[ptr - TARGET_1.length] = true;
         ptr++;
       }
-
       if (ptr >= total) {
         if (line1Ref.current) line1Ref.current.textContent = TARGET_1;
         if (line2Ref.current) line2Ref.current.textContent = TARGET_2;
         return;
       }
-
       if (line1Ref.current) line1Ref.current.textContent = renderScramble(TARGET_1, res1);
       if (line2Ref.current) line2Ref.current.textContent = renderScramble(TARGET_2, res2);
-
       rafRef.current = requestAnimationFrame(loop);
     };
-
     rafRef.current = requestAnimationFrame(loop);
   };
 
@@ -344,6 +343,8 @@ function Home({ lang, setLang }) {
   const mantraRevealedRef = useRef(false);
 
   useEffect(() => {
+    const mobile = isMobile();
+
     const lenis = new Lenis({
       duration: 1.35,
       easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -355,10 +356,9 @@ function Home({ lang, setLang }) {
     gsap.ticker.add(tickerFn);
     gsap.ticker.lagSmoothing(0);
 
-    /* ── S1 — PIN + SPLIT ANIMATION ── */
+    /* ── S1 — PIN + SPLIT (desktop only) ── */
     const s1El = s1PinRef.current;
-    if (s1El && leftHalfRef.current && rightHalfRef.current && heroNameRef.current) {
-
+    if (!mobile && s1El && leftHalfRef.current && rightHalfRef.current && heroNameRef.current) {
       gsap.set(heroNameRef.current, { opacity: 0, y: 0 });
 
       const splitTl = gsap.timeline({
@@ -377,9 +377,12 @@ function Home({ lang, setLang }) {
         .to(leftHalfRef.current, { x: "-54vw", ease: "power2.inOut" }, 0)
         .to(rightHalfRef.current, { x: "54vw", ease: "power2.inOut" }, 0)
         .to(heroNameRef.current, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+    } else if (mobile && heroNameRef.current) {
+      // On mobile: show name immediately, no pin
+      gsap.set(heroNameRef.current, { opacity: 1 });
     }
 
-    /* ── S2 — reveal com IntersectionObserver ── */
+    /* ── S2 — reveal rows ── */
     if (s2Ref.current) {
       const dc = s2Ref.current;
       const tlR = dc.querySelectorAll(".q-tl .s2-row");
@@ -403,31 +406,30 @@ function Home({ lang, setLang }) {
             io2.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.15 });
+      }, { threshold: 0.1 });
 
       if (bc) { gsap.set(bc, { opacity: 0 }); io2.observe(bc); }
       if (dot) { gsap.set(dot, { opacity: 0 }); io2.observe(dot); }
       revealEls.forEach(el => io2.observe(el));
     }
 
-    /* ── Painel horizontal S2 → S3 ── */
+    /* ── Horizontal panels — DESKTOP only ── */
     const outerEl = hOuter.current;
     const trackEl = outerEl?.querySelector(".h-track");
 
-    if (outerEl && trackEl) {
-      requestAnimationFrame(() => ScrollTrigger.refresh());
+    const revealMantra = () => {
+      mantraRevealedRef.current = true;
+      if (!mantraRef.current) return;
+      const rows = mantraRef.current.querySelectorAll(".m-row");
+      rows.forEach((el, i) => {
+        if (el.dataset.animated) return;
+        el.dataset.animated = "1";
+        gsap.to(el, { opacity: 1, y: 0, duration: 0.85, ease: "power3.out", delay: i * 0.1 });
+      });
+    };
 
-      // ── Extract reveal logic to reuse it ──
-      const revealMantra = () => {
-        mantraRevealedRef.current = true;   // ← add this line
-        if (!mantraRef.current) return;
-        const rows = mantraRef.current.querySelectorAll(".m-row");
-        rows.forEach((el, i) => {
-          if (el.dataset.animated) return;
-          el.dataset.animated = "1";
-          gsap.to(el, { opacity: 1, y: 0, duration: 0.85, ease: "power3.out", delay: i * 0.1 });
-        });
-      };
+    if (!mobile && outerEl && trackEl) {
+      requestAnimationFrame(() => ScrollTrigger.refresh());
 
       gsap.to(trackEl, {
         x: () => -window.innerWidth,
@@ -441,22 +443,52 @@ function Home({ lang, setLang }) {
           anticipatePin: 1,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
-            if (self.progress >= 0.4) revealMantra();  // ← simplified
+            if (self.progress >= 0.4) revealMantra();
           },
         },
       });
-
-
     }
 
+    /* ── S3 slide-in from right — mobile/tablet only ── */
+    if (mobile && outerEl) {
+      const s3El = outerEl.querySelector(".s3");
+      if (s3El) {
+        gsap.set(s3El, { x: "100vw" });
+        let s3Animated = false;
+
+        const checkS3 = () => {
+          if (s3Animated) return;
+          const rect = s3El.getBoundingClientRect();
+          // rect.top usa a posição de layout (translateX não afeta o top)
+          if (rect.top <= window.innerHeight * 0.88) {
+            s3Animated = true;
+            gsap.to(s3El, { x: 0, duration: 1.1, ease: "power3.out" });
+            lenis.off("scroll", checkS3);
+          }
+        };
+
+        lenis.on("scroll", checkS3);
+      }
+    }
+    /* ── Manifesto rows initial state ── */
     if (mantraRef.current) {
       const rows = Array.from(mantraRef.current.querySelectorAll(".m-row"));
 
-      if (mantraRevealedRef.current) {
-        // user is already at S3 — show immediately, no animation needed
+      if (mobile) {
+        // Mobile: reveal with IntersectionObserver instead of horizontal scroll trigger
+        gsap.set(rows, { opacity: 0, y: 30 });
+        const mio = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              gsap.to(entry.target, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
+              mio.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15 });
+        rows.forEach(r => mio.observe(r));
+      } else if (mantraRevealedRef.current) {
         gsap.set(rows, { opacity: 1, y: 0 });
       } else {
-        // first visit — hide and wait for scroll threshold
         gsap.set(rows, { opacity: 0, y: 40 });
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
@@ -467,7 +499,19 @@ function Home({ lang, setLang }) {
         });
       }
     }
+
+    /* ── Handle resize: rebuild ScrollTrigger on orientation change ── */
+    let resizeTimer;
+    const onResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 250);
+    };
+    window.addEventListener("resize", onResize, { passive: true });
+
     return () => {
+      window.removeEventListener("resize", onResize);
       if (tickerFnRef.current) {
         gsap.ticker.remove(tickerFnRef.current);
         tickerFnRef.current = null;
@@ -477,11 +521,7 @@ function Home({ lang, setLang }) {
     };
   }, []);
 
-  useEffect(() => {
-    // nada aqui por enquanto — as traduções já são reativas via `t = DATA[lang]`
-  }, [lang]);
-
-  const goToProjects = () => {
+  const cleanupAndNavigate = (href) => {
     if (tickerFnRef.current) {
       gsap.ticker.remove(tickerFnRef.current);
       tickerFnRef.current = null;
@@ -491,29 +531,15 @@ function Home({ lang, setLang }) {
       lenisRef.current = null;
     }
     ScrollTrigger.getAll().forEach(s => s.kill());
-    navigate("/projects");
-  };
-
-  // ── adicione junto com goToProjects ──
-  const handleNav = (href) => {
-    if (tickerFnRef.current) {
-      gsap.ticker.remove(tickerFnRef.current);
-      tickerFnRef.current = null;
-    }
-    if (lenisRef.current) {
-      lenisRef.current.destroy();
-      lenisRef.current = null;
-    }
-    ScrollTrigger.getAll().forEach(s => s.kill());
-    navigate(href);
-
-    // Links externos abrem em nova aba, internos usam navigate
-    if (href.startsWith('http')) {
-      window.open(href, '_blank', 'noopener');
+    if (href.startsWith("http")) {
+      window.open(href, "_blank", "noopener");
     } else {
       navigate(href);
     }
   };
+
+  const goToProjects = () => cleanupAndNavigate("/projects");
+  const handleNav = (href) => cleanupAndNavigate(href);
 
   return (
     <>
@@ -562,21 +588,17 @@ function Home({ lang, setLang }) {
           </div>
 
           <div className="s1-split-scene">
-
             <div className="split-half split-half--left" ref={leftHalfRef}>
               <HalfScene isRight={false} />
             </div>
-
             <div className="split-crack-3d" aria-hidden="true">
               <div className="split-crack-3d__face split-crack-3d__face--left" />
               <div className="split-crack-3d__face split-crack-3d__face--right" />
               <div className="split-crack-3d__core" />
             </div>
-
             <div className="split-half split-half--right" ref={rightHalfRef}>
               <HalfScene isRight={true} />
             </div>
-
           </div>
 
           <span className="s1-eyebrow-float anim-1">portfólio · richard s. bezerra</span>
@@ -595,7 +617,6 @@ function Home({ lang, setLang }) {
         </div>
 
         <div className="s1-accent-line" aria-hidden="true" />
-
         <div className="s1-crosshair" aria-hidden="true">
           <div className="s1-crosshair-dot" />
         </div>
