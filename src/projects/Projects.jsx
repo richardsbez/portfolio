@@ -395,6 +395,7 @@ function ProjectRow({ p, isOpen, onToggle }) {
                   <span key={i} className="proj-highlight">{t(hk)}</span>
                 ))}
               </div>
+              {/*
               {p.url !== "#" && (
                 <a
                   href={p.url}
@@ -405,7 +406,7 @@ function ProjectRow({ p, isOpen, onToggle }) {
                 >
                   {t("visit_project")}
                 </a>
-              )}
+              )}*/}
             </div>
           </div>
         </div>

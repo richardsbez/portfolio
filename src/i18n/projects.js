@@ -21,7 +21,7 @@ export const translations = {
     header_count: "{{count}} projetos",
 
     // Hero
-    hero_eyebrow: "portfólio de trabalho",
+    hero_eyebrow: "portfólio",
     hero_title: "projetos",
     hero_sub: "Pessoais, profissionais ou os dois ao mesmo tempo —\ntudo que construo com intenção vive aqui.",
 
@@ -120,7 +120,7 @@ export const translations = {
     header_tag: "003 / projects",
     header_count: "{{count}} projects",
 
-    hero_eyebrow: "work portfolio",
+    hero_eyebrow: "portfolio",
     hero_title: "projects",
     hero_sub: "Personal, professional, or both at once —\neverything I build with intention lives here.",
 
@@ -208,7 +208,7 @@ export const translations = {
     header_tag: "003 / proyectos",
     header_count: "{{count}} proyectos",
 
-    hero_eyebrow: "portafolio de trabajo",
+    hero_eyebrow: "portafolio",
     hero_title: "proyectos",
     hero_sub: "Personales, profesionales o ambos a la vez —\ntodo lo que construyo con intención vive aquí.",
 
@@ -384,7 +384,7 @@ export const translations = {
     header_tag: "003 / projets",
     header_count: "{{count}} projets",
 
-    hero_eyebrow: "portfolio de travail",
+    hero_eyebrow: "portfolio",
     hero_title: "projets",
     hero_sub: "Personnels, professionnels ou les deux à la fois —\ntout ce que je construis avec intention vit ici.",
 

@@ -748,34 +748,301 @@ html, body {
 
 /* ════════════════════════════════════════════
    RESPONSIVE
+   Apenas mobile/tablet — desktop intocado.
 ════════════════════════════════════════════ */
-@media (max-width: 768px) {
-  .proj-header { padding: 0 1.5rem; }
-  .proj-hero   { padding: 3.5rem 1.5rem 0; }
-  .proj-legend { padding: 1.2rem 1.5rem; gap: 1.5rem; }
-  .proj-list   { padding: 0 1.5rem; }
-  .proj-foot   { padding: 1.5rem; }
 
-  .proj-row-inner  { gap: 1.4rem; padding: 2rem 0 0; }
-  .proj-body-top   { flex-direction: column; gap: .6rem; }
-  .proj-hero-title { font-size: clamp(3.5rem, 12vw, 6rem); }
-  .proj-hero-rule  { margin-left: -1.5rem; }
+/* ── Tablet largo (≤ 1024px) ─────────────────
+   Reduz espaçamentos laterais e tamanho do título
+   sem quebrar a estrutura de duas colunas.
+──────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .proj-header  { padding: 0 2rem; }
+  .proj-hero    { padding: 3rem 2rem 0; }
+  .proj-legend  { padding: 1.4rem 2rem; }
+  .proj-list    { padding: 0 2rem; }
+  .proj-foot    { padding: 2rem; }
+  .proj-hero-rule { margin-left: -2rem; }
 
   .proj-details-content {
-    grid-template-columns: 1fr;
-    padding-left: calc(20px + 1.4rem);
+    padding-left: calc(28px + 1.8rem);
+    gap: 1.6rem 2rem;
   }
-
-  .theme-badge { bottom: 1rem; right: 1rem; }
-
-  /* Esconde o contador de projetos no header em mobile */
-  .proj-header-count { display: none; }
 }
 
+/* ── Tablet (≤ 768px) ────────────────────────
+   Header reorganizado em duas linhas,
+   coluna única no painel de detalhes.
+──────────────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Header: altura automática + layout em duas linhas */
+  .proj-header {
+    height: auto;
+    min-height: 54px;
+    padding: .6rem 1.5rem;
+    flex-wrap: wrap;
+    gap: .5rem;
+    row-gap: .4rem;
+  }
+
+  /* Back ocupa toda a linha; switcher e tag na segunda */
+  .proj-back {
+    font-size: .95rem;
+  }
+
+  .cv-lang-switcher {
+    order: 3;
+    flex: 1 0 100%;
+    padding-bottom: .4rem;
+    gap: .25rem;
+  }
+
+  /* Botões de idioma com área de toque maior */
+  .cv-lang-btn {
+    font-size: .58rem;
+    padding: .38rem 1rem;
+    min-height: 32px;
+  }
+
+  .proj-header-right {
+    gap: .8rem;
+  }
+
+  /* Esconde contador (muito estreito) */
+  .proj-header-count { display: none; }
+
+  /* Hero */
+  .proj-hero  { padding: 2.5rem 1.5rem 0; }
+  .proj-hero-rule { margin-left: -1.5rem; }
+  .proj-hero-title {
+    font-size: clamp(3.2rem, 11vw, 5.5rem);
+    line-height: 1;
+  }
+  .proj-hero-sub {
+    font-size: .7rem;
+    max-width: 100%;
+  }
+
+  /* Legend */
+  .proj-legend {
+    padding: 1rem 1.5rem;
+    gap: 1.2rem;
+  }
+
+  /* Lista e rows */
+  .proj-list  { padding: 0 1.5rem; }
+
+  .proj-row-inner {
+    gap: 1rem;
+    padding: 1.8rem 0 0;
+  }
+
+  /* Número do projeto menor */
+  .proj-num {
+    width: 20px;
+    font-size: .44rem;
+  }
+
+  /* Topo da row: empilha nome + controles */
+  .proj-body-top {
+    flex-direction: column;
+    gap: .5rem;
+    align-items: flex-start;
+  }
+
+  /* Nome-wrap: nome + tags + status em linha com wrap */
+  .proj-name-wrap {
+    gap: .6rem;
+    align-items: center;
+  }
+
+  .proj-name {
+    font-size: clamp(1.4rem, 5.5vw, 2rem);
+  }
+
+  /* Controles direitos (link externo + expand) ficam à direita do nome */
+  .proj-body-right {
+    align-self: flex-end;
+    position: absolute;
+    top: 1.8rem;
+    right: 0;
+  }
+
+  /* Ícone expand maior para toque */
+  .proj-expand-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+  }
+
+  /* Área de toque mínima no link externo */
+  .proj-ext-link {
+    font-size: .9rem;
+    padding: 4px;
+    opacity: .55;
+    min-width: 28px;
+    min-height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .proj-desc {
+    font-size: .68rem;
+    max-width: 100%;
+  }
+
+  /* Métricas */
+  .proj-metrics { gap: .4rem .8rem; }
+  .proj-metric  { font-size: .42rem; }
+
+  /* Stack chips */
+  .proj-stack-item {
+    font-size: .4rem;
+    padding: .2rem .55rem;
+  }
+
+  /* Link inline ocupa largura disponível em mobile */
+  .proj-inline-link {
+    width: 100%;
+    justify-content: center;
+    padding: .55rem 1rem;
+    font-size: .44rem;
+    margin-bottom: 1.2rem;
+  }
+
+  /* Painel de detalhes: coluna única */
+  .proj-details-content {
+    grid-template-columns: 1fr;
+    padding: 1.4rem 0 2rem calc(20px + 1rem);
+    gap: 1.5rem;
+  }
+
+  /* Rodapé */
+  .proj-foot {
+    padding: 1.5rem;
+    flex-direction: column;
+    gap: .6rem;
+    text-align: center;
+  }
+
+  /* Badge fixo menor */
+  .theme-badge {
+    bottom: 1rem;
+    right: 1rem;
+    font-size: .42rem;
+    padding: .5rem 1rem;
+  }
+}
+
+/* ── Mobile pequeno (≤ 480px) ────────────────
+   Layout ultra-compacto; legenda oculta.
+──────────────────────────────────────────── */
 @media (max-width: 480px) {
-  .proj-header { gap: .5rem; }
-  .proj-hero   { padding: 2rem 1rem 0; }
-  .proj-legend { display: none; } /* Muito apertado em telas muito pequenas */
-  .proj-list   { padding: 0 1rem; }
-  .proj-foot   { padding: 1.2rem 1rem; flex-direction: column; gap: .8rem; text-align: center; }
+
+  /* Header ainda mais compacto */
+  .proj-header {
+    padding: .5rem 1rem;
+    gap: .3rem;
+  }
+
+  .proj-back {
+    font-size: .85rem;
+    gap: .5rem;
+  }
+
+  .proj-back-arrow { font-size: .75rem; }
+
+  .cv-lang-btn {
+    font-size: .52rem;
+    padding: .32rem .75rem;
+  }
+
+  /* Legenda: oculta em telas muito pequenas */
+  .proj-legend { display: none; }
+
+  /* Hero */
+  .proj-hero  { padding: 2rem 1rem 0; }
+  .proj-hero-rule { margin-left: -1rem; }
+  .proj-hero-title { font-size: clamp(2.8rem, 13vw, 4.5rem); }
+  .proj-hero-inner { gap: 1rem; }
+  .proj-hero-sub {
+    font-size: .65rem;
+    line-height: 1.75;
+  }
+
+  /* Lista */
+  .proj-list  { padding: 0 1rem; }
+
+  .proj-row-inner {
+    gap: .7rem;
+    padding: 1.4rem 0 0;
+  }
+
+  /* Sem número do projeto — economiza espaço horizontal */
+  .proj-num { display: none; }
+
+  .proj-body-right {
+    top: 1.4rem;
+  }
+
+  .proj-name {
+    font-size: clamp(1.25rem, 6.5vw, 1.7rem);
+  }
+
+  /* Tags menores */
+  .tag {
+    font-size: .4rem;
+    padding: .22rem .6rem;
+  }
+
+  .proj-status {
+    font-size: .38rem;
+  }
+
+  .proj-desc {
+    font-size: .64rem;
+    line-height: 1.8;
+  }
+
+  /* Detalhes */
+  .proj-details-content {
+    padding: 1.2rem 0 1.8rem 0;
+    gap: 1.2rem;
+  }
+
+  .proj-detail-text { font-size: .64rem; }
+
+  .proj-highlight {
+    font-size: .4rem;
+    padding: .2rem .55rem;
+  }
+  .proj-ext-link, 
+  .proj-status {
+    display: none ;
+  }
+
+  /* Rodapé */
+  .proj-foot { padding: 1.2rem 1rem; }
+
+  /* Badge oculto em telas muito pequenas */
+  .theme-badge { display: none; }
+}
+
+/* ── Foldable / muito estreito (≤ 360px) ─────
+   Ajustes finais para telas extremamente estreitas.
+──────────────────────────────────────────── */
+@media (max-width: 360px) {
+  .proj-hero-title { font-size: clamp(2.4rem, 15vw, 3.5rem); }
+
+  .proj-name { font-size: clamp(1.1rem, 7vw, 1.5rem); }
+
+  .cv-lang-btn {
+    font-size: .48rem;
+    padding: .28rem .6rem;
+  }
+
+  .proj-list { padding: 0 .75rem; }
+
+  .proj-details-content { padding: 1rem 0 1.4rem 0; }
 }
