@@ -1,18 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ── VARIÁVEIS ── */
+/* ── variáveis ── */
 :root {
   --cv-ink:        #111111;
   --cv-mid:        #444444;
   --cv-light:      #888888;
   --cv-paper:      #ffffff;
-  --cv-ember:      #E5430A;
+  --cv-ember:      #e5430a;
   --cv-bg:         #f0ece4;
-  --cv-font-body:  'EB Garamond', Georgia, serif;
+  --cv-font-body:  'Open Sans', Helvetica, Arial, sans-serif;
   --cv-font-mono:  'IBM Plex Mono', monospace;
   --cv-page-w:     210mm;
   --cv-page-h:     297mm;
@@ -28,11 +28,11 @@
 }
 .cv-back-btn:hover { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.4); }
 
-/* ── RESET ── */
+/* ── reset ── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 a { color: var(--cv-ink); text-decoration: underline; }
 
-/* ── TOOLBAR (não imprime) ── */
+/* ── toolbar (não imprime) ── */
 .cv-toolbar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   background: var(--cv-ink); height: 52px; display: flex; align-items: center;
@@ -73,7 +73,7 @@ a { color: var(--cv-ink); text-decoration: underline; }
 }
 .cv-download-btn:hover { background: #c73608; }
 
-/* ── PÁGINA — TELA NORMAL ── */
+/* ── página — tela normal ── */
 body {
   background: var(--cv-bg);
   padding-top: 72px;
@@ -92,7 +92,7 @@ body {
   padding: 14mm 14mm 18mm;
 }
 
-/* ── CABEÇALHO ── */
+/* ── cabeçalho ── */
 .cv-header {
   display: flex; justify-content: space-between; align-items: flex-start;
   gap: 2rem; margin-bottom: 10mm; padding-bottom: 6mm;
@@ -101,19 +101,18 @@ body {
 .cv-name {
   font-family: var(--cv-font-body);
   font-size: 2.55rem; font-weight: 700; line-height: 1.05;
-  letter-spacing: -.01em; color: var(--cv-ink); white-space: pre-line;
-}
-.cv-header-right { text-align: right; flex-shrink: 0; padding-top: .3rem; }
+  letter-spacing: -.01em; color: var(--cv-ink); white-space: pre-line; padding-top: 3rem;}
+.cv-header-right { text-align: right; flex-shrink: 0; padding-top: 3rem; }
 .cv-contact-line { font-size: .8rem; color: var(--cv-mid); line-height: 1.65; }
 .cv-contact-line a { color: var(--cv-mid); }
 
-/* ── CORPO 2 COLUNAS ── */
+/* ── corpo 2 colunas ── */
 .cv-body {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 0 10mm; align-items: start;
 }
 
-/* ── SEÇÕES ── */
+/* ── seções ── */
 .cv-section { margin-bottom: 7mm; }
 .cv-section-title {
   font-family: var(--cv-font-body); font-size: .82rem; font-weight: 700;
@@ -123,7 +122,7 @@ body {
 .cv-rule { height: 1.5px; background: var(--cv-ink); margin-bottom: 3.5mm; }
 .cv-summary { font-size: .88rem; line-height: 1.65; color: var(--cv-mid); }
 
-/* ── EXPERIÊNCIA ── */
+/* ── experiência ── */
 .cv-exp { margin-bottom: 4mm; }
 .cv-exp-role {
   font-family: var(--cv-font-body); font-style: italic; font-weight: 600;
@@ -133,7 +132,7 @@ body {
 .cv-exp-list { list-style: disc; padding-left: 1.1rem; }
 .cv-exp-list li { font-size: .82rem; line-height: 1.6; color: var(--cv-mid); margin-bottom: .8mm; }
 
-/* ── TECNOLOGIAS / COMPETÊNCIAS ── */
+/* ── tecnologias / competências ── */
 .cv-sub-title {
   font-family: var(--cv-font-body); font-style: italic; font-weight: 600;
   font-size: .84rem; color: var(--cv-ink); margin-bottom: 2mm;
@@ -144,22 +143,185 @@ body {
 }
 .cv-tech-row strong, .cv-other-row strong { color: var(--cv-ink); font-style: italic; }
 
-/* ── LÍNGUAS ── */
+/* ── línguas ── */
 .cv-lang-list { list-style: disc; padding-left: 1.1rem; }
 .cv-lang-list li { font-size: .82rem; line-height: 1.65; color: var(--cv-mid); font-style: italic; }
 
-/* ── EDUCAÇÃO ── */
+/* ── educação ── */
 .cv-edu { margin-bottom: 3mm; }
 .cv-edu-inst { font-style: italic; font-weight: 600; font-size: .86rem; color: var(--cv-ink); }
 .cv-edu-degree { font-size: .8rem; color: var(--cv-mid); }
 
+
 /* ══════════════════════════════════════════════════
-   PRINT — escala o conteúdo para caber em 1 página
+   RESPONSIVO — tablet (768px – 900px)
+   Header empilhado, 2 colunas mantidas
+   ══════════════════════════════════════════════════ */
+@media screen and (max-width: 900px) and (min-width: 768px) {
+  body { padding-top: 72px; }
+
+  .cv-toolbar {
+    flex-direction: column;
+    height: auto;
+    padding: 6px 0 4px;
+    position: sticky; /* Substitui o fixed do PC */
+    top: 0;
+  }
+
+  .cv-toolbar-logo { display: none; }
+
+  .cv-sheet {
+    width: 100%;
+    min-height: unset;
+    padding: 10mm 10mm 14mm;
+    box-shadow: none;
+    margin-bottom: 2rem;
+  }
+
+  /* empilha o header para o nome não brigar com os contatos */
+  .cv-header {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .cv-header-right { text-align: right; padding-top: 2rem; }
+
+  .cv-name { font-size: 2.1rem; }
+}
+
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVO — mobile (< 768px)
+   Toolbar em 2 linhas fixas, layout coluna única
+   ══════════════════════════════════════════════════ */
+@media screen and (max-width: 767px) {
+  /*
+    A toolbar é reorganizada em 2 linhas explícitas:
+      Linha 1: ← Início  |  (espaço)  |  ↓ Baixar PDF
+      Linha 2: idiomas centralizados
+    Altura total ≈ 96px → padding-top compensa.
+  */
+  .cv-toolbar {
+    height: auto;
+    padding: 6px 0 4px;
+    position: sticky; /* Substitui o fixed do PC */
+    top: 0;
+  }
+
+  .cv-toolbar-inner {
+    padding: 0 1rem;
+    gap: 0;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  /* linha 1: back btn ocupa a esquerda */
+  .cv-back-btn {
+    order: 1;
+    padding: .22rem .6rem;
+    font-size: .52rem;
+  }
+
+  /* logo some */
+  .cv-toolbar-logo { display: none; }
+
+  /* cv-toolbar-right: download btn + lang switcher lado a lado na linha 1 */
+  .cv-toolbar-right {
+    order: 2;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  /* download btn fica na linha 1, compacto */
+  .cv-download-btn {
+    order: 2;
+    padding: .28rem .7rem;
+    font-size: .52rem;
+  }
+
+  /* lang switcher desce para linha 2, ocupando 100% da largura */
+  .cv-lang-switcher {
+    order: 3;
+    flex-basis: 100%;
+    justify-content: center;
+    gap: .2rem;
+    padding: 4px 0 2px;
+    border-top: 1px solid rgba(255,255,255,.08);
+    margin-top: 4px;
+  }
+
+  .cv-lang-btn {
+    padding: .18rem .52rem;
+    font-size: .5rem;
+  }
+
+  /* padding-top = altura da toolbar (~96px) + folga */
+  body { padding-top: 0; }
+
+  /* folha: largura total, sem sombra, padding confortável */
+  .cv-sheet {
+    width: 100%;
+    min-height: unset;
+    margin: 0 0 2rem;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 6vw 5vw 10vw;
+  }
+
+  /* cabeçalho: empilha verticalmente */
+  .cv-header {
+    flex-direction: column;
+    gap: .8rem;
+    margin-bottom: 6vw;
+    padding-bottom: 4vw;
+  }
+
+  .cv-name { font-size: 2rem; white-space: normal; }
+
+  .cv-header-right {
+    text-align: left;
+    padding-top: 0;
+  }
+
+  .cv-contact-line { font-size: .88rem; }
+
+  /* corpo: coluna única */
+  .cv-body {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  /* seções */
+  .cv-section { margin-bottom: 6vw; }
+
+  .cv-section-title { font-size: .9rem; margin-bottom: 2vw; }
+
+  .cv-rule { margin-bottom: 3vw; }
+
+  .cv-summary { font-size: 1rem; }
+
+  .cv-exp-role { font-size: 1rem; }
+  .cv-exp-meta { font-size: .88rem; }
+  .cv-exp-list li { font-size: .92rem; }
+
+  .cv-sub-title { font-size: .96rem; }
+  .cv-tech-row, .cv-other-row { font-size: .9rem; }
+  .cv-lang-list li { font-size: .92rem; }
+
+  .cv-edu-inst { font-size: .96rem; }
+  .cv-edu-degree { font-size: .9rem; }
+}
+
+
+/* ══════════════════════════════════════════════════
+   print — escala o conteúdo para caber em 1 página
    sem alterar nenhum tamanho de fonte/espaçamento
    ══════════════════════════════════════════════════ */
 @media print {
   @page {
-    size: A4 portrait;
+    size: a4 portrait;
     margin: 0;
   }
 
@@ -174,14 +336,6 @@ body {
     margin: 0 !important;
   }
 
-  /*
-    Truque: envolve o sheet num container que ocupa
-    exatamente 1 página A4, e usa transform: scale()
-    para encolher apenas na hora do print.
-
-    O valor 0.78 = razão entre a altura real do conteúdo
-    e a altura de 1 página A4. Ajuste se necessário.
-  */
   body {
     display: flex;
     align-items: flex-start;
@@ -189,14 +343,24 @@ body {
   }
 
   .cv-sheet {
-    /* mantém o tamanho real — o scale cuida do resto */
     width: 210mm !important;
     min-height: auto !important;
     margin: 0 !important;
     box-shadow: none !important;
-
-    /* ancora no topo — sem corte no cabeçalho */
- transform-origin: top center;
+    padding: 14mm 14mm 18mm !important; /* restaura padding original no print */
+    transform-origin: top center;
     transform: scale(0.78);
   }
+
+  /* garante 2 colunas no print independente do viewport */
+  .cv-body {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* garante header em linha no print */
+  .cv-header {
+    flex-direction: row !important;
+  }
+
+  .cv-name { font-size: 2.55rem !important; }
 }

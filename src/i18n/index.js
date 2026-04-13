@@ -3,12 +3,12 @@
 const PT = {
   status: "disponível para projetos",
   sub: "Construo coisas que\nsentem, significam\ne permanecem.",
-  bc: "/ quem sou / p. 002",
+  bc: "002",
   projects: "Projetos",
   prof: {
     ey: "profissional",
     rows: [
-      { k: "Currículo", v: "ver →", em: false, href: "/resume" },
+      { k: "Currículo em PDF", v: "ver →", em: false, href: "/resume" },
       { k: "GitHub", v: "@richardsbez", em: false, href: "https://github.com/richardsbez" },
       { k: "LinkedIn", v: "conectar →", em: false, href: "https://linkedin.com/in/richardsbezerra" },
       { k: "Startup", v: "ayrCore tech", em: false, href: "https://www.ayrcoretech.com/pt-BR" },
@@ -42,12 +42,12 @@ const PT = {
 const EN = {
   status: "available for projects",
   sub: "I build things that\nfeel, mean something\nand last.",
-  bc: "/ who am i / p. 002",
+  bc: "002",
   projects: "Projects",
   prof: {
     ey: "professional",
     rows: [
-      { k: "Resume", v: "view →", em: false, href: "/resume" },
+      { k: "Resume in PDF", v: "view →", em: false, href: "/resume" },
       { k: "GitHub", v: "@richardsbez", em: false, href: "https://github.com/richardsbez" },
       { k: "LinkedIn", v: "connect →", em: false, href: "https://linkedin.com/in/richardsbezerra" },
       { k: "Startup", v: "ayrCore tech", em: false, href: "https://www.ayrcoretech.com/en-US" },
@@ -81,12 +81,12 @@ const EN = {
 const ES = {
   status: "disponible para proyectos",
   sub: "Construyo cosas que\nse sienten, significan\ny perduran.",
-  bc: "/ quién soy / p. 002",
+  bc: "002",
   projects: "Proyectos",
   prof: {
     ey: "profesional",
     rows: [
-      { k: "Currículum", v: "ver →", em: false, href: "/resume" },
+      { k: "Currículum en PDF", v: "ver →", em: false, href: "/resume" },
       { k: "GitHub", v: "@richardsbez", em: false, href: "https://github.com/richardsbez" },
       { k: "LinkedIn", v: "conectar →", em: false, href: "https://linkedin.com/in/richardsbezerra" },
       { k: "Startup", v: "ayrCore tech", em: false, href: "https://www.ayrcoretech.com/es-ES" },
@@ -120,12 +120,12 @@ const ES = {
 const DE = {
   status: "verfügbar für Projekte",
   sub: "Ich baue Dinge, die\nfühlen, bedeuten\nund bleiben.",
-  bc: "/ wer ich bin / p. 002",
+  bc: "002",
   projects: "Projekte",
   prof: {
     ey: "beruflich",
     rows: [
-      { k: "Lebenslauf", v: "ansehen →", em: false, href: "/resume" },
+      { k: "Lebenslauf als PDF", v: "ansehen →", em: false, href: "/resume" },
       { k: "GitHub", v: "@richardsbez", em: false, href: "https://github.com/richardsbez" },
       { k: "LinkedIn", v: "vernetzen →", em: false, href: "https://linkedin.com/in/richardsbezerra" },
       { k: "Startup", v: "ayrCore tech", em: false, href: "https://www.ayrcoretech.com/de-DE" },
@@ -159,12 +159,12 @@ const DE = {
 const FR = {
   status: "disponible pour des projets",
   sub: "Je crée des choses qui\nressentent, signifient\net perdurent.",
-  bc: "/ qui suis-je / p. 002",
+  bc: "002",
   projects: "Projets",
   prof: {
     ey: "professionnel",
     rows: [
-      { k: "CV", v: "voir →", em: false, href: "/resume" },
+      { k: "CV en PDF", v: "voir →", em: false, href: "/resume" },
       { k: "GitHub", v: "richardsbez", em: false, href: "https://github.com/richardsbez" },
       { k: "LinkedIn", v: "se connecter →", em: false, href: "https://linkedin.com/in/richardsbezerra" },
       { k: "Startup", v: "ayrCore tech", em: false, href: "https://www.ayrcoretech.com/fr-FR" },
@@ -198,12 +198,12 @@ const FR = {
 const ZH = {
   status: "接受项目合作",
   sub: "我构建的东西\n有感受、有意义\n且经久不衰。",
-  bc: "/ 关于我 / p. 002",
+  bc: "002",
   projects: "项目",
   prof: {
     ey: "职业",
     rows: [
-      { k: "简历", v: "查看 →", em: false, href: "/resume" },
+      { k: "PDF 简历", v: "查看 →", em: false, href: "/resume" },
       { k: "GitHub", v: "@richardsbez", em: false, href: "https://github.com/richardsbez" },
       { k: "LinkedIn", v: "联系 →", em: false, href: "https://linkedin.com/in/richardsbezerra" },
       { k: "创业项目", v: "ayrCore tech", em: false, href: "https://www.ayrcoretech.com/zh-CN" },
@@ -237,12 +237,12 @@ const ZH = {
 const JA = {
   status: "プロジェクト受付中",
   sub: "感じ、意味を持ち\n残り続けるものを\n作っています。",
-  bc: "/ 自己紹介 / p. 002",
+  bc: "002",
   projects: "プロジェクト",
   prof: {
     ey: "プロフィール",
     rows: [
-      { k: "履歴書", v: "見る →", em: false, href: "/resume" },
+      { k: "PDF版履歴書", v: "見る →", em: false, href: "/resume" },
       { k: "GitHub", v: "@richardsbez", em: false, href: "https://github.com/richardsbez" },
       { k: "LinkedIn", v: "つながる →", em: false, href: "https://linkedin.com/in/richardsbezerra" },
       { k: "スタートアップ", v: "ayrCore tech", em: false, href: "https://www.ayrcoretech.com/ja-JP" },

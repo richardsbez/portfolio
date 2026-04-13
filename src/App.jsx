@@ -577,7 +577,7 @@ function Home({ lang, setLang }) {
         </div>
 
         <div className="s1-topbar anim-1">
-          <span className="s1-topbar-tag">001 / HERO</span>
+          <span className="s1-topbar-tag">001</span>
           <span className="s1-topbar-coords">23°33′S · 46°38′W · BRASIL</span>
         </div>
 
@@ -601,7 +601,7 @@ function Home({ lang, setLang }) {
             </div>
           </div>
 
-          <span className="s1-eyebrow-float anim-1">portfólio · richard s. bezerra</span>
+          <span className="s1-eyebrow-float anim-1"> richardsbeze </span>
 
         </div>
 
@@ -689,7 +689,7 @@ function Home({ lang, setLang }) {
           {/* ── PANEL S3 ── */}
           <section className="s3 h-panel">
             <div className="s3-transit">
-              <span className="s3-eyebrow">003 / manifesto</span>
+              <span className="s3-eyebrow">003</span>
               <div className="s3-transit-rule" />
               <span className="s3-year">RSB</span>
             </div>
