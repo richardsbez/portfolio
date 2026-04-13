@@ -1,4 +1,4 @@
-/* ─────────────────────────────────────────────────────────────────────────────
+/* ─────────────────────────────────
    JSeeker.css — RAW ENGINEERING MANIFESTO
    Paleta: Ink black + Steel white + Lime elétrico
    Tipografia: Bebas Neue (display) · IBM Plex Mono (mono) · DM Sans (body)
@@ -828,4 +828,63 @@
   .jsk-s-role, .jsk-s-tag, .jsk-s-icon { display: none; }
   .jsk-hero-title      { font-size: clamp(6rem, 22vw, 9rem); }
   .jsk-footer          { flex-direction: column; gap: .5rem; text-align: center; }
+}
+
+/* ── Responsive Refined (Fix Image Issues) ──────────────────────────────────── */
+
+@media (max-width: 768px) {
+  /* Impede que o container pai transborde */
+  .jsk-arch-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .jsk-pipeline {
+    flex-direction: column; /* Empilha os itens verticalmente */
+    align-items: stretch;   /* Faz os cards ocuparem a largura total */
+    gap: 1rem;
+    padding: 1.5rem;
+    overflow-x: hidden;     /* Remove o scroll lateral já que agora é vertical */
+  }
+
+  .jsk-pipe-step {
+    width: 100%;
+    flex-direction: row;    /* No mobile, box e legenda ficam lado a lado ou alinhados */
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .jsk-pipe-box {
+    flex: 1;                /* Faz o card da Query/Tokenizer crescer */
+    font-size: 0.7rem;
+    padding: 0.7rem;
+    text-align: center;
+  }
+
+  .jsk-pipe-sub {
+    width: 80px;            /* Largura fixa para a legenda na direita */
+    text-align: right;
+    margin: 0;
+  }
+
+  /* Ajuste da Seta: Agora aponta para baixo */
+  .jsk-pipe-arr {
+    padding: 0;
+    margin: -0.2rem 0;
+    text-align: center;
+    width: 100%;
+    transform: rotate(90deg); /* Gira a seta para indicar o fluxo abaixo */
+    display: block;
+    height: 20px;
+    line-height: 20px;
+  }
+
+  /* Ajuste opcional para o título da seção não quebrar bizarramente */
+  .jsk-heading {
+    font-size: 3.2rem;
+    line-height: 1.1;
+    white-space: normal;
+  }
 }

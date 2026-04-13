@@ -236,18 +236,21 @@ export default function ProjectCoreShelll() {
 
       {/* ── NAV ────────────────────────────────────────────────────────────── */}
       <nav ref={navRef} className="csh-nav">
-        <p className="csh-nav-logo">
-          <a href="/projects">{t.navHome}</a>
-        </p>
+        <div className="csh-nav-essential">
+          <p className="csh-nav-logo">
+            <a href="/projects">{t.navHome}</a>
+          </p>
 
-        <span className="csh-nav-title">{t.navTitle}</span>
+          {/* Esconde o título no mobile (resoluções muito baixas), mostra no tablet e PC */}
+          <span className="csh-nav-title csh-hidden-mobile">{t.navTitle}</span>
+        </div>
 
-        <ul style={{ display: 'flex', gap: '1.6rem', listStyle: 'none' }}>
+        {/* Esconde o menu de navegação no mobile e tablet, mostra só no PC (lg) */}
+        <ul className="csh-nav-links csh-hidden-until-lg">
           {t.nav.map((label, i) => (
-            <li key={label} style={{ fontSize: '.72rem', color: 'var(--csh-text2)' }}>
+            <li key={label}>
               <a
                 href={`#${NAV_IDS[i]}`}
-                style={{ textDecoration: 'none', color: 'inherit', transition: 'color .2s' }}
                 onClick={(e) => { e.preventDefault(); scrollTo(NAV_IDS[i]) }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--csh-cyan)')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = '')}
@@ -270,7 +273,6 @@ export default function ProjectCoreShelll() {
           ))}
         </div>
       </nav>
-
       {/* ══════════════════════════════════════════════
           HERO
       ══════════════════════════════════════════════ */}
@@ -576,3 +578,259 @@ export default function ProjectCoreShelll() {
     </div>
   )
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+ 
+  
+  
+  
+    
+      
+    
+    
+  
+             
+             
+            
+    
+        
+      
+      
+   
+   
+      
+        
+          
+        
+        
+      
+    
+  
+ 
+
+ 
+ 
+    
+    
+      
+        
+        
+          
+          
+        
+        
+          
+      
+        
+          
+            
+            
+            
+          
+        
+      
+    
+  
+ 
+
+ 
+ 
+  
+    
+      
+ 
+        
+        
+          
+          
+            
+            
+          
+          
+            
+              
+                
+                  
+                    
+                    
+                
+                
+            
+          
+        
+            
+        
+        
+          
+            
+              
+              
+              
+              
+            
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+              
+                  
+            
+          
+             
+            
+        
+              
+              
+                  
+          
+        
+        
+        
+          
+          
+        
+      
+        
+      

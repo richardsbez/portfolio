@@ -483,15 +483,99 @@
 }
 
 /* ── Responsive ───────────────────────────────────────────────────────────── */
-@media (max-width: 768px) {
-  .cs-hero { padding: 0 1.25rem 4rem; }
-  .cs-section, .cs-section-wide { padding: 5rem 1.25rem; }
-  .cs-nav { padding: 1rem 1.25rem; }
-  .cs-nav-links { display: none; }
-  .cs-hero-line, .cs-hero-scroll-hint { display: none; }
-  .cs-footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+
+@media (max-width: 1024px) {
+  /* Ajuste para tablets: Grid de métricas e stack */
+  .cs-section { padding: 6rem 2rem; }
+  
+  /* Se houver um grid de métricas ou stack, garantimos que não quebre */
+  .grid-cols-4, .grid-cols-3 { 
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 1rem !important;
+  }
 }
 
+@media (max-width: 768px) {
+  /* Ajustes de Layout Base */
+  .cs-hero { 
+    padding: 0 1.5rem 3rem; 
+    justify-content: center; /* Centraliza melhor em telas menores */
+  }
+  .cs-section, .cs-section-wide { 
+    padding: 4rem 1.5rem; 
+  }
+  
+  /* Navegação */
+  .cs-nav { padding: 1rem 1.5rem; }
+  .cs-nav-links { display: none; } /* Esconde links para focar no conteúdo ou menu hambúrguer */
+  
+  /* Tipografia */
+  .cs-hero-title {
+    font-size: clamp(3rem, 15vw, 5.5rem);
+    line-height: 1;
+    margin-bottom: 1.5rem;
+  }
+  
+  .cs-hero-sub {
+    font-size: 0.9rem;
+    max-width: 100%;
+  }
+
+  /* Elementos Decorativos */
+  .cs-hero-line, .cs-hero-scroll-hint { display: none; }
+
+  /* Timeline: Ajuste de espaçamento para telas estreitas */
+  .cs-timeline-item {
+    padding-left: 1.5rem;
+    padding-bottom: 3rem;
+  }
+  .cs-timeline-title {
+    font-size: 1.4rem;
+  }
+
+  /* Footer */
+  .cs-footer { 
+    flex-direction: column; 
+    gap: 1rem; 
+    text-align: center; 
+    padding: 2rem 1.5rem;
+  }
+
+  /* Grids de Metas e Stack para Mobile (1 coluna) */
+  [class*="grid-cols-"] {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+  
+  /* Ajuste de cards para mobile */
+  .cs-metric-card, .cs-stack-card {
+    padding: 1.25rem;
+  }
+
+  .cs-metric-value {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Ajustes finos para celulares muito pequenos */
+  .cs-hero-title {
+    font-size: 3rem;
+  }
+  
+  .cs-hero-tags {
+    gap: 0.35rem;
+  }
+  
+  .cs-tag {
+    font-size: 0.55rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .cs-btn {
+    width: 100%; /* Botões ocupam largura total para facilitar o toque */
+    justify-content: center;
+  }
+}
 /* ── Animação do cursor piscante no label do hero ───────────────────────────── */
 @keyframes blink {
   0%, 100% { opacity: 1; }

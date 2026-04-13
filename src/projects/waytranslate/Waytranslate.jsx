@@ -22,7 +22,6 @@ gsap.registerPlugin(ScrollTrigger)
 
 /**
  * Renderiza um parágrafo com marcação simples *negrito*.
- * Ex: "Texto *palavra* mais texto" → <p>Texto <em>palavra</em> mais texto</p>
  */
 function RichPara({ text, className }) {
   const html = text.replace(
@@ -32,9 +31,6 @@ function RichPara({ text, className }) {
   return <p className={className} dangerouslySetInnerHTML={{ __html: html }} />
 }
 
-/**
- * Parágrafo de coluna latina (fundo escuro).
- */
 function LatinRichPara({ text }) {
   const html = text.replace(
     /\*(.*?)\*/g,
@@ -192,13 +188,32 @@ export default function WaytranslateCLI() {
     return 'PT'
   })
 
+  // ── Estado do menu mobile ──────────────────────────────────────────────────
+  const [menuOpen, setMenuOpen] = useState(false)
+
   const t = CASE_DATA[lang] ?? CASE_DATA.PT
 
   const handleLangChange = useCallback((code) => {
     setLang(code)
     localStorage.setItem('portfolio-lang', code)
     ScrollTrigger.refresh()
+    setMenuOpen(false)
   }, [])
+
+  // Fecha o menu ao redimensionar para desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 900) setMenuOpen(false)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  // Bloqueia scroll do body quando menu está aberto
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [menuOpen])
 
   // ── Refs ───────────────────────────────────────────────────────────────────
   const rootRef = useRef(null)
@@ -227,8 +242,6 @@ export default function WaytranslateCLI() {
       gsap.ticker.remove((time) => lenis.raf(time * 1000))
     }
   }, [])
-
-
 
   // ── 3. Progress bar ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -280,7 +293,7 @@ export default function WaytranslateCLI() {
       io.observe(el)
     })
     return () => io.disconnect()
-  }, [lang]) // re-run quando muda idioma (elementos re-renderizados)
+  }, [lang])
 
   // ── 7. Stack hover intent ──────────────────────────────────────────────────
   useEffect(() => {
@@ -306,6 +319,7 @@ export default function WaytranslateCLI() {
 
   // ── Smooth scroll to section ───────────────────────────────────────────────
   const scrollTo = useCallback((id) => {
+    setMenuOpen(false)
     lenisRef.current?.scrollTo(`#${id}`, { offset: -70, duration: 1.4 })
   }, [])
 
@@ -325,13 +339,14 @@ export default function WaytranslateCLI() {
       {/* ════════════════════════════════════════
           NAV
       ════════════════════════════════════════ */}
-      <nav ref={navRef} className="wtc-nav">
+      <nav ref={navRef} className={`wtc-nav${menuOpen ? ' scrolled' : ''}`}>
         <p className="wtc-nav-logo">
           <a href="/projects" style={{ textDecoration: 'none', color: 'inherit' }}>
             {t.navHome}
           </a>
         </p>
 
+        {/* Links desktop */}
         <ul className="wtc-nav-links">
           {t.nav.map((label, i) => (
             <li key={label}>
@@ -345,6 +360,7 @@ export default function WaytranslateCLI() {
           ))}
         </ul>
 
+        {/* Lang switcher desktop */}
         <div className="wtc-lang-row">
           {CASE_LANGS.map(({ code, flag }) => (
             <button
@@ -357,7 +373,46 @@ export default function WaytranslateCLI() {
             </button>
           ))}
         </div>
+
+        {/* Hamburger — visível apenas em ≤900px via CSS */}
+        <button
+          className={`wtc-hamburger${menuOpen ? ' open' : ''}`}
+          onClick={() => setMenuOpen((v) => !v)}
+          aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
+          aria-expanded={menuOpen}
+        >
+          <span /><span /><span />
+        </button>
       </nav>
+
+      {/* ════════════════════════════════════════
+          MOBILE MENU OVERLAY
+      ════════════════════════════════════════ */}
+      <div className={`wtc-mobile-menu${menuOpen ? ' open' : ''}`} aria-hidden={!menuOpen}>
+        {t.nav.map((label, i) => (
+          <a
+            key={label}
+            href={`#${NAV_IDS[i]}`}
+            onClick={(e) => { e.preventDefault(); scrollTo(NAV_IDS[i]) }}
+          >
+            {label}
+          </a>
+        ))}
+
+        {/* Lang switcher dentro do menu mobile */}
+        <div className="wtc-mobile-lang-row">
+          {CASE_LANGS.map(({ code }) => (
+            <button
+              key={code}
+              className={`wtc-lang-btn${lang === code ? ' active' : ''}`}
+              onClick={() => handleLangChange(code)}
+              title={code}
+            >
+              {code}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* ════════════════════════════════════════
           HERO
@@ -392,7 +447,7 @@ export default function WaytranslateCLI() {
           </div>
         </div>
 
-        {/* Right — dark terminal panel */}
+        {/* Right — dark terminal panel (visível em desktop e mobile via CSS) */}
         <div className="wtc-hero-r">
           <TerminalWidget terminal={t.hero.terminal} />
           <p className="wtc-term-label">{t.hero.termLabel}</p>
@@ -403,7 +458,6 @@ export default function WaytranslateCLI() {
           MARQUEE
       ════════════════════════════════════════ */}
       <div className="wtc-mq-wrap">
-        {/* Duplicate track for seamless loop */}
         <div className="wtc-mq-track">
           {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
             <span key={i} className={`wtc-mq-item${item.hot ? ' hot' : ''}`}>
