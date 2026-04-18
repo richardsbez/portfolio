@@ -851,7 +851,7 @@ html, body {
   letter-spacing: -.02em;
   transition: color .3s;
 }
-.m-row.m-last:hover .m-text var(--ember) 
+.m-row.m-last:hover .m-text var(--ember); 
 .m-row.m-last .m-num { border-right-color: rgba(229,67,10,.08); }
 .m-row.m-last .m-tag { display: none; }
 
