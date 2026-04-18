@@ -14,6 +14,7 @@ import Projectcoreshelll from './projects/projectcoreshelll/Projectcoreshelll.js
 import "./App.css";
 import DATA, { LANGS, SKILLS } from "./i18n/index.js";
 import Row from "./components/Row.jsx";
+import HeroScene from "./components/HeroScene.jsx"
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -113,148 +114,6 @@ function Ticker({ items, dark = false, speed = 22 }) {
   );
 }
 
-/* ── HALF SCENE ── */
-function HalfScene({ isRight = false }) {
-  const boxRef = useRef(null);
-
-  useEffect(() => {
-    const box = boxRef.current;
-    if (!box) return;
-
-    const SIZE = box.clientWidth || 480;
-    let renderer, raf, isVisible = true;
-
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, stencil: true });
-    renderer.setSize(SIZE, SIZE);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-    renderer.setClearColor(0x000000, 0);
-    renderer.localClippingEnabled = true;
-    box.appendChild(renderer.domElement);
-
-    const scene = new THREE.Scene();
-    const cam = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-    cam.position.z = 7.0;
-
-    const clipPlane = new THREE.Plane(
-      isRight ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(-1, 0, 0),
-      0
-    );
-
-    const knotGeom = new THREE.TorusKnotGeometry(1.2, 0.38, 120, 20, 2, 3);
-    const ringGeom = new THREE.TorusGeometry(1.65, 0.007, 8, 64);
-
-    const group = new THREE.Group();
-    scene.add(group);
-
-    const mBack = new THREE.MeshBasicMaterial({
-      side: THREE.BackSide,
-      clippingPlanes: [clipPlane],
-      depthWrite: false, colorWrite: false,
-      stencilWrite: true,
-      stencilFunc: THREE.AlwaysStencilFunc,
-      stencilFail: THREE.KeepStencilOp,
-      stencilZFail: THREE.KeepStencilOp,
-      stencilZPass: THREE.IncrementWrapStencilOp,
-    });
-    const meshBack = new THREE.Mesh(knotGeom, mBack);
-    meshBack.renderOrder = 0;
-    group.add(meshBack);
-
-    const mFront = new THREE.MeshBasicMaterial({
-      side: THREE.FrontSide,
-      clippingPlanes: [clipPlane],
-      depthWrite: false, colorWrite: false,
-      stencilWrite: true,
-      stencilFunc: THREE.AlwaysStencilFunc,
-      stencilFail: THREE.KeepStencilOp,
-      stencilZFail: THREE.KeepStencilOp,
-      stencilZPass: THREE.DecrementWrapStencilOp,
-    });
-    const meshFront = new THREE.Mesh(knotGeom, mFront);
-    meshFront.renderOrder = 0;
-    group.add(meshFront);
-
-    const wire = new THREE.Mesh(knotGeom, new THREE.MeshBasicMaterial({
-      color: 0x18150F, wireframe: true, clippingPlanes: [clipPlane],
-    }));
-    wire.renderOrder = 2;
-    group.add(wire);
-
-    const capGeom = new THREE.PlaneGeometry(10, 10);
-    capGeom.rotateY(Math.PI / 2);
-    const cap = new THREE.Mesh(capGeom, new THREE.MeshBasicMaterial({
-      color: 0xE5430A, depthWrite: false,
-      stencilWrite: true, stencilRef: 0,
-      stencilFunc: THREE.NotEqualStencilFunc,
-      stencilFail: THREE.ZeroStencilOp,
-      stencilZFail: THREE.ZeroStencilOp,
-      stencilZPass: THREE.ZeroStencilOp,
-    }));
-    cap.renderOrder = 1;
-    scene.add(cap);
-
-    const ring = new THREE.Mesh(ringGeom, new THREE.MeshBasicMaterial({
-      color: 0xE5430A, clippingPlanes: [clipPlane],
-    }));
-    ring.renderOrder = 2;
-    scene.add(ring);
-
-    const pts = [];
-    for (let i = 0; i < 120; i++) {
-      const θ = Math.random() * Math.PI * 2;
-      const φ = Math.acos(2 * Math.random() - 1);
-      const r = 2.1 + Math.random() * 1.2;
-      pts.push(r * Math.sin(φ) * Math.cos(θ), r * Math.sin(φ) * Math.sin(θ), r * Math.cos(φ));
-    }
-    const pg = new THREE.BufferGeometry();
-    pg.setAttribute("position", new THREE.Float32BufferAttribute(pts, 3));
-    scene.add(new THREE.Points(pg, new THREE.PointsMaterial({
-      color: 0x9A9488, size: 0.02, clippingPlanes: [clipPlane],
-    })));
-
-    const tick = () => {
-      if (!isVisible) { raf = requestAnimationFrame(tick); return; }
-      raf = requestAnimationFrame(tick);
-      const t = performance.now() * 0.001;
-      group.rotation.x = t * 0.3;
-      group.rotation.y = t * 0.5;
-      ring.rotation.z = t * 0.4;
-      renderer.render(scene, cam);
-    };
-    raf = requestAnimationFrame(tick);
-
-    const io = new IntersectionObserver(
-      ([entry]) => { isVisible = entry.isIntersecting; },
-      { threshold: 0 }
-    );
-    io.observe(box);
-
-    // Handle resize (e.g. orientation change)
-    const onResize = () => {
-      const sz = box.clientWidth;
-      if (sz && sz !== renderer.domElement.width) {
-        renderer.setSize(sz, sz);
-        cam.updateProjectionMatrix();
-      }
-    };
-    window.addEventListener("resize", onResize, { passive: true });
-
-    return () => {
-      cancelAnimationFrame(raf);
-      io.disconnect();
-      window.removeEventListener("resize", onResize);
-      knotGeom.dispose();
-      ringGeom.dispose();
-      capGeom.dispose();
-      renderer.dispose();
-      if (box.contains(renderer.domElement)) box.removeChild(renderer.domElement);
-    };
-  }, []);
-
-  return (
-    <div ref={boxRef} className={`half-scene-box${isRight ? " half-scene-box--right" : ""}`} />
-  );
-}
 
 /* ── SCRAMBLE NAME ── */
 const _SC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -313,12 +172,7 @@ function ScrambleName() {
     <div className="sn-wrap" onMouseEnter={runScramble}>
       <span ref={line1Ref} className="sn-line sn-l1">{TARGET_1}</span>
       <span ref={line2Ref} className="sn-line sn-l2">{TARGET_2}</span>
-      <div className="sn-rule" />
-      <span className="sn-sub">
-        <span className="sn-sub-dot" />
-        FULL-STACK DEV · BRASIL · 2025
-        <span className="sn-sub-dot" />
-      </span>
+
     </div>
   );
 }
@@ -332,8 +186,7 @@ function Home({ lang, setLang }) {
   const mantraRef = useRef(null);
 
   const s1PinRef = useRef(null);
-  const leftHalfRef = useRef(null);
-  const rightHalfRef = useRef(null);
+  const modelGroupRef = useRef(null);   // Three.js Group — GSAP target
   const heroNameRef = useRef(null);
 
   const lenisRef = useRef(null);
@@ -358,28 +211,56 @@ function Home({ lang, setLang }) {
 
     /* ── S1 — PIN + SPLIT (desktop only) ── */
     const s1El = s1PinRef.current;
-    if (!mobile && s1El && leftHalfRef.current && rightHalfRef.current && heroNameRef.current) {
-      gsap.set(heroNameRef.current, { opacity: 0, y: 0 });
+    if (!mobile && s1El) {
+      // Hide text until scroll reveals it
+      if (heroNameRef.current) {
+        heroNameRef.current.style.opacity = "0";
+        heroNameRef.current.style.transform = "translateY(-50%) translateX(56px)";
+      }
 
-      const splitTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: s1El,
-          start: "top top",
-          end: "+=100%",
-          pin: true,
-          scrub: 1.4,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
+      ScrollTrigger.create({
+        trigger: s1El,
+        start: "top top",
+        end: "+=120%",
+        pin: true,
+        scrub: 1.5,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+
+        onUpdate(self) {
+          const p = self.progress; // 0 → 1
+
+          /* ── Modelo desliza para esquerda + rotaciona ── */
+          if (modelGroupRef.current) {
+            modelGroupRef.current.position.x = p * -1.4;
+            modelGroupRef.current.rotation.y = p * (Math.PI * 0.3);
+          }
+
+          /* ── Texto emerge de dentro do modelo ──
+             - Começa no centro (exatamente onde o .glb está)
+             - Opacity 0 → 1 com partida suave após 10% do scroll
+             - Blur 14px → 0px  (efeito de "condensar" do modelo)
+             - Drifta levemente para direita conforme modelo vai esquerda
+             - Scale 0.92 → 1   (sai "de dentro", expande)
+          */
+          if (heroNameRef.current) {
+            const raw = Math.max(0, (p - 0.1) / 0.9);          // 0→1, inicia em 10%
+            const ease = raw < 1 ? raw * raw * (3 - 2 * raw) : 1; // smoothstep
+
+            heroNameRef.current.style.opacity = String(Math.min(1, ease * 1.15));
+            heroNameRef.current.style.filter = `blur(${(1 - ease) * 14}px)`;
+            heroNameRef.current.style.transform =
+              `translate(-50%, -50%) translateX(${ease * 22}px) scale(${0.92 + ease * 0.08})`;
+          }
         },
       });
 
-      splitTl
-        .to(leftHalfRef.current, { x: "-54vw", ease: "power2.inOut" }, 0)
-        .to(rightHalfRef.current, { x: "54vw", ease: "power2.inOut" }, 0)
-        .to(heroNameRef.current, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
-    } else if (mobile && heroNameRef.current) {
-      // On mobile: show name immediately, no pin
-      gsap.set(heroNameRef.current, { opacity: 1 });
+    } else if (mobile) {
+      /* Mobile: no pin, show name immediately */
+      if (heroNameRef.current) {
+        heroNameRef.current.style.opacity = "1";
+        heroNameRef.current.style.transform = "translateY(-50%) translateX(0px)";
+      }
     }
 
     /* ── S2 — reveal rows ── */
@@ -583,22 +464,15 @@ function Home({ lang, setLang }) {
 
         <div className="s1-split-wrapper">
 
-          <div className="s1-hero-name" ref={heroNameRef}>
-            <ScrambleName />
+          {/* ── Full-bleed GLB canvas ── */}
+          <div className="s1-scene-wrap">
+            <HeroScene groupRef={modelGroupRef} />
           </div>
 
-          <div className="s1-split-scene">
-            <div className="split-half split-half--left" ref={leftHalfRef}>
-              <HalfScene isRight={false} />
-            </div>
-            <div className="split-crack-3d" aria-hidden="true">
-              <div className="split-crack-3d__face split-crack-3d__face--left" />
-              <div className="split-crack-3d__face split-crack-3d__face--right" />
-              <div className="split-crack-3d__core" />
-            </div>
-            <div className="split-half split-half--right" ref={rightHalfRef}>
-              <HalfScene isRight={true} />
-            </div>
+          {/* ── Right-side name — scroll-driven ── */}
+
+          <div className="s1-center-name" ref={heroNameRef}>
+            <ScrambleName />
           </div>
 
           <span className="s1-eyebrow-float anim-1"> richardsbeze </span>
@@ -612,7 +486,7 @@ function Home({ lang, setLang }) {
               <span className="scroll-line" />
               <span>scroll</span>
             </div>
-            <span className="s1-year">© 2025</span>
+            <span className="s1-year">©</span>
           </div>
         </div>
 

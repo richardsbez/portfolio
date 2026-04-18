@@ -21,29 +21,38 @@ html, body {
 
 /* ── DEFAULTS (sem tema ativo) ── */
 .proj-page {
-  --p:              #F5F3EE;
-  --ink:            #18150F;
-  --fog:            #9A9488;
-  --rule:           rgba(24,21,15,.1);
-  --ember:          #E5430A;
+  /* Fundo e Texto principal mantidos */
+  --p:              #EBECEF;
+  --ink:            #1C1E21;
+  --fog:            #8E9299;
+  --rule:           rgba(28, 30, 33, 0.1);
+
+  /* NOVO BRONZE: Mais escuro para melhor contraste (Acessibilidade) */
+  --ember:          #A67C37; 
+  
   --font-hero:      'Barlow Condensed', sans-serif;
-  --tag-bg:         rgba(229,67,10,.1);
-  --tag-border:     rgba(229,67,10,.25);
-  --tag-color:      #E5430A;
-  --detail-bg:      rgba(229,67,10,.06);
-  --detail-border:  rgba(229,67,10,.18);
-  --detail-color:   #E5430A;
-  --badge-bg:       rgba(24,21,15,.06);
-  --badge-border:   rgba(24,21,15,.18);
-  --badge-color:    #18150F;
-  --row-hover-bg:   rgba(229,67,10,.02);
-  --name-hover:     #E5430A;
-  --expand-active:  #E5430A;
+  --ts:             .55s cubic-bezier(.16, 1, .3, 1);
+
+  /* Tags: Aumentei um pouco a opacidade da borda para definir melhor o limite */
+  --tag-bg:         rgba(166, 124, 55, 0.1);
+  --tag-border:     rgba(166, 124, 55, 0.35); /* Mais visível */
+  --tag-color:      #A67C37;
+
+  /* Detalhes */
+  --detail-bg:      rgba(166, 124, 55, 0.06);
+  --detail-border:  rgba(166, 124, 55, 0.2);
+  --detail-color:   #A67C37;
+
+  /* Badges e Hovers */
+  --badge-bg:       rgba(28, 30, 33, 0.06);
+  --badge-border:   rgba(28, 30, 33, 0.18);
+  --badge-color:    #1C1E21;
+  --row-hover-bg:   rgba(166, 124, 55, 0.04); /* Leve toque de bronze no hover */
+  --name-hover:     #A67C37;
+  --expand-active:  #A67C37;
+
   --glow-hero:      none;
   --glow-accent:    none;
-  --ts:             .55s cubic-bezier(.16,1,.3,1);
-
-  /* Variável de foco — visível mesmo com temas escuros */
   --focus-ring:     2px solid var(--ember);
   --focus-offset:   3px;
 }

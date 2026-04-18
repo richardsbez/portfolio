@@ -10,7 +10,7 @@
   --cv-mid:        #444444;
   --cv-light:      #888888;
   --cv-paper:      #ffffff;
-  --cv-ember:      #e5430a;
+  --cv-ember:      #D8A657;
   --cv-bg:         #f0ece4;
   --cv-font-body:  'Open Sans', Helvetica, Arial, sans-serif;
   --cv-font-mono:  'IBM Plex Mono', monospace;
@@ -71,7 +71,7 @@ a { color: var(--cv-ink); text-decoration: underline; }
   background: var(--cv-ember); color: #fff; border: none; padding: .38rem 1rem;
   cursor: pointer; display: flex; align-items: center; gap: .5rem; transition: background .2s;
 }
-.cv-download-btn:hover { background: #c73608; }
+.cv-download-btn:hover { background: #E29E30; }
 
 /* ── página — tela normal ── */
 body {
@@ -190,77 +190,78 @@ body {
 }
 
 
-/* ══════════════════════════════════════════════════
-   RESPONSIVO — mobile (< 768px)
-   Toolbar em 2 linhas fixas, layout coluna única
-   ══════════════════════════════════════════════════ */
 @media screen and (max-width: 767px) {
-  /*
-    A toolbar é reorganizada em 2 linhas explícitas:
-      Linha 1: ← Início  |  (espaço)  |  ↓ Baixar PDF
-      Linha 2: idiomas centralizados
-    Altura total ≈ 96px → padding-top compensa.
-  */
   .cv-toolbar {
     height: auto;
-    padding: 6px 0 4px;
-    position: sticky; /* Substitui o fixed do PC */
+    padding: 0;
+    position: sticky;
     top: 0;
   }
 
   .cv-toolbar-inner {
-    padding: 0 1rem;
+    padding: 0;
+    flex-direction: column;
     gap: 0;
-    flex-wrap: wrap;
-    align-items: center;
+    align-items: stretch;
   }
 
-  /* linha 1: back btn ocupa a esquerda */
-  .cv-back-btn {
-    order: 1;
-    padding: .22rem .6rem;
-    font-size: .52rem;
-  }
-
-  /* logo some */
-  .cv-toolbar-logo { display: none; }
-
-  /* cv-toolbar-right: download btn + lang switcher lado a lado na linha 1 */
+  /* ── linha 1: ← INÍCIO  |  ↓ BAIXAR PDF ── */
   .cv-toolbar-right {
-    order: 2;
-    margin-left: auto;
+    display: contents; /* deixa os filhos participarem do flex do inner */
+  }
+
+  .cv-back-btn,
+  .cv-download-btn {
+    order: 1;
+  }
+
+  /* row que agrupa back + download na mesma linha */
+  .cv-toolbar-inner::before {
+    content: none; /* sem pseudo-elementos, usamos flexbox diretamente */
+  }
+
+  /* wrapper linha 1 */
+  .cv-toolbar-row1 {
     display: flex;
     align-items: center;
-    gap: .5rem;
+    justify-content: space-between;
+    padding: 6px 12px;
   }
 
-  /* download btn fica na linha 1, compacto */
+  .cv-back-btn {
+    font-size: .52rem;
+    padding: .22rem .6rem;
+  }
+
   .cv-download-btn {
-    order: 2;
-    padding: .28rem .7rem;
+    font-size: .52rem;
+    padding: .3rem .8rem;
+  }
+
+  .cv-toolbar-logo { display: none; }
+
+  /* ── linha 2: idiomas com scroll suave ── */
+  .cv-lang-switcher {
+    display: flex;
+    gap: .25rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 4px 12px 6px;
+    border-top: 1px solid rgba(255,255,255,.08);
+    justify-content: flex-start; /* scroll a partir da esquerda */
+  }
+
+  .cv-lang-switcher::-webkit-scrollbar { display: none; }
+
+  .cv-lang-btn {
+    flex-shrink: 0; /* impede os botões de encolherem */
+    padding: .2rem .55rem;
     font-size: .52rem;
   }
 
-  /* lang switcher desce para linha 2, ocupando 100% da largura */
-  .cv-lang-switcher {
-    order: 3;
-    flex-basis: 100%;
-    justify-content: center;
-    gap: .2rem;
-    padding: 4px 0 2px;
-    border-top: 1px solid rgba(255,255,255,.08);
-    margin-top: 4px;
-  }
-
-  .cv-lang-btn {
-    padding: .18rem .52rem;
-    font-size: .5rem;
-  }
-
-  /* padding-top = altura da toolbar (~96px) + folga */
   body { padding-top: 0; }
 
-  /* folha: largura total, sem sombra, padding confortável */
   .cv-sheet {
     width: 100%;
     min-height: unset;
@@ -270,7 +271,6 @@ body {
     padding: 6vw 5vw 10vw;
   }
 
-  /* cabeçalho: empilha verticalmente */
   .cv-header {
     flex-direction: column;
     gap: .8rem;
@@ -278,42 +278,27 @@ body {
     padding-bottom: 4vw;
   }
 
-  .cv-name { font-size: 2rem; white-space: normal; }
+  .cv-name { font-size: 2rem; white-space: normal; padding-top: 0; }
 
-  .cv-header-right {
-    text-align: left;
-    padding-top: 0;
-  }
+  .cv-header-right { text-align: left; padding-top: 0; }
 
   .cv-contact-line { font-size: .88rem; }
 
-  /* corpo: coluna única */
-  .cv-body {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
+  .cv-body { grid-template-columns: 1fr; gap: 0; }
 
-  /* seções */
   .cv-section { margin-bottom: 6vw; }
-
   .cv-section-title { font-size: .9rem; margin-bottom: 2vw; }
-
   .cv-rule { margin-bottom: 3vw; }
-
   .cv-summary { font-size: 1rem; }
-
   .cv-exp-role { font-size: 1rem; }
   .cv-exp-meta { font-size: .88rem; }
   .cv-exp-list li { font-size: .92rem; }
-
   .cv-sub-title { font-size: .96rem; }
   .cv-tech-row, .cv-other-row { font-size: .9rem; }
   .cv-lang-list li { font-size: .92rem; }
-
   .cv-edu-inst { font-size: .96rem; }
   .cv-edu-degree { font-size: .9rem; }
 }
-
 
 /* ══════════════════════════════════════════════════
    print — escala o conteúdo para caber em 1 página
@@ -364,3 +349,5 @@ body {
 
   .cv-name { font-size: 2.55rem !important; }
 }
+
+

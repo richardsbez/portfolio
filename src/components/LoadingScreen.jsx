@@ -1,19 +1,28 @@
 import { Component, createRef } from "react";
 
-/* ─────────────────────────────────────────────
-   Só keyframes e pseudo-elementos aqui —
-   tudo que CSS inline não consegue fazer
-───────────────────────────────────────────── */
 const KEYFRAMES = `
   @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500;700&display=swap');
+
+  :root {
+    --paper: #EBECEF;
+    --ink:   #1C1E21;
+    --ember: #D8A657;
+    --fog:   #8E9299;
+    --rule:  rgba(28,30,33,0.1);
+    --night: #101114;
+  }
 
   @keyframes lsCurtain {
     to { clip-path: inset(0 0 100% 0); }
   }
   @keyframes lsRot    { to { transform: rotate( 360deg); } }
   @keyframes lsRotR   { to { transform: rotate(-360deg); } }
-  @keyframes lsPulse  { 0%,100%{opacity:.04} 50%{opacity:.13} }
+  @keyframes lsPulse  { 0%,100%{opacity:.05} 50%{opacity:.16} }
   @keyframes lbIn     { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+  @keyframes scanLine {
+    0%   { top: -4px; }
+    100% { top: 100%; }
+  }
   @keyframes gA {
     0%,89%,100%{transform:none;opacity:0}
     90%{transform:translateX(-4px) skewX(-1.5deg);opacity:1}
@@ -36,12 +45,12 @@ const KEYFRAMES = `
     position: absolute; inset: 0; pointer-events: none;
   }
   .ls-num::before {
-    color: rgba(0,200,255,.17);
+    color: rgba(235,236,239,.14);
     clip-path: polygon(0 20%,100% 20%,100% 38%,0 38%);
     animation: gA 5s ease-in-out infinite;
   }
   .ls-num::after {
-    color: rgba(229,67,10,.28);
+    color: rgba(216,166,87,.22);
     clip-path: polygon(0 62%,100% 62%,100% 80%,0 80%);
     animation: gB 7s ease-in-out infinite;
   }
@@ -50,6 +59,15 @@ const KEYFRAMES = `
 
   .ls-exit {
     animation: lsCurtain .85s cubic-bezier(.76,0,.24,1) forwards;
+  }
+
+  .ls-scanbeam {
+    position: absolute;
+    left: 0; right: 0; height: 2px;
+    background: linear-gradient(to bottom, transparent, rgba(216,166,87,.07), transparent);
+    animation: scanLine 6s linear infinite;
+    pointer-events: none;
+    z-index: 3;
   }
 `;
 
@@ -66,10 +84,9 @@ const PHASES = [
 const REVERSED_PHASES = [...PHASES].reverse();
 
 const CHARS = "01アイウエオ#@!><:/|=+-~";
-const CHARS_LEN = CHARS.length; // Cache do length
+const CHARS_LEN = CHARS.length;
 const DURATION = 2800;
 
-/* ─── Canvas de streams — class component ─── */
 class StreamCanvas extends Component {
   constructor(props) {
     super(props);
@@ -81,12 +98,9 @@ class StreamCanvas extends Component {
   componentDidMount() {
     const cv = this.ref.current;
     if (!cv) return;
-    const ctx = cv.getContext("2d", { alpha: true }); // Otimização interna do browser
+    const ctx = cv.getContext("2d", { alpha: true });
 
-    // Variáveis pré-calculadas para evitar recálculo a cada 200ms
-    let cvWidth = 0;
-    let cvHeight = 0;
-    let positions = [];
+    let cvWidth = 0, cvHeight = 0, positions = [];
     const MX = 48, MY = 80, COLS = 18, ROWS = 10;
 
     const fit = () => {
@@ -94,11 +108,8 @@ class StreamCanvas extends Component {
       cvHeight = cv.offsetHeight;
       cv.width = cvWidth;
       cv.height = cvHeight;
-
-      // OTIMIZAÇÃO 3: Definir fonte e cor apenas no resize, não a cada loop de renderização
-      ctx.fillStyle = "rgba(229,67,10,.18)";
+      ctx.fillStyle = "rgba(216,166,87,.15)";
       ctx.font = "9px 'IBM Plex Mono', monospace";
-
       positions = [
         { ox: MX, oy: MY, dir: 1 },
         { ox: cvWidth - MX, oy: MY, dir: -1 },
@@ -114,13 +125,11 @@ class StreamCanvas extends Component {
     const draw = () => {
       if (!cvWidth || !cvHeight) return;
       ctx.clearRect(0, 0, cvWidth, cvHeight);
-
       for (let i = 0; i < positions.length; i++) {
         const { ox, oy, dir } = positions[i];
         for (let r = 0; r < ROWS; r++) {
           for (let c = 0; c < COLS; c++) {
             if (Math.random() > .5) {
-              // OTIMIZAÇÃO 4: Uso de Bitwise (| 0) no lugar de Math.floor() para mais velocidade
               const ch = CHARS[(Math.random() * CHARS_LEN) | 0];
               ctx.fillText(ch, ox + dir * c * 8, oy + r * 12);
             }
@@ -150,7 +159,7 @@ class StreamCanvas extends Component {
     );
   }
 }
-/* ─── LoadingScreen ─── */
+
 export default class LoadingScreen extends Component {
   constructor(props) {
     super(props);
@@ -158,7 +167,7 @@ export default class LoadingScreen extends Component {
     this._raf = null;
     this._start = null;
     this._prevLabel = "INITIALIZING";
-    this._prevV = -1; // Rastreia o valor anterior da porcentagem
+    this._prevV = -1;
     this.fillRef = createRef();
     this.numRef = createRef();
     this.pctRef = createRef();
@@ -178,7 +187,6 @@ export default class LoadingScreen extends Component {
     const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
     const v = Math.floor(eased * 100);
 
-    // OTIMIZAÇÃO 2: Só atualiza o DOM e calcula strings SE a porcentagem mudou
     if (v !== this._prevV) {
       this._prevV = v;
       const padded = String(v).padStart(3, "0");
@@ -190,9 +198,7 @@ export default class LoadingScreen extends Component {
         this.numRef.current.dataset.n = padded;
       }
 
-      /* Usando o array pre-calculado para evitar GC (Garbage Collection) */
       const ph = (REVERSED_PHASES.find(p => v >= p.at) || PHASES[0]).label;
-
       if (ph !== this._prevLabel) {
         this._prevLabel = ph;
         this.setState({ label: ph });
@@ -212,11 +218,10 @@ export default class LoadingScreen extends Component {
   render() {
     const { label, exiting } = this.state;
 
-    /* ─── styles inline ─── */
     const s = {
       root: {
         position: "fixed", inset: 0, zIndex: 9999,
-        background: "#0F0E0C",
+        background: "var(--night, #101114)",
         display: "flex", flexDirection: "column",
         fontFamily: "'IBM Plex Mono', monospace",
         overflow: "hidden",
@@ -224,36 +229,39 @@ export default class LoadingScreen extends Component {
       },
       scan: {
         position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
-        background: "repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,.05) 3px, rgba(0,0,0,.05) 4px)",
+        background: "repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,.04) 3px, rgba(0,0,0,.04) 4px)",
       },
       geo: {
         position: "absolute", inset: 0, zIndex: 0,
         width: "100%", height: "100%", pointerEvents: "none",
       },
       corners: {
-        position: "absolute", inset: 0, pointerEvents: "none", zIndex: 2,
+        position: "absolute", inset: 0, pointerEvents: "none", zIndex: 4,
       },
       corner: (top, right, bottom, left) => ({
         position: "absolute",
-        width: 20, height: 20,
+        width: 18, height: 18,
         top, right, bottom, left,
         borderStyle: "solid",
-        borderColor: "rgba(229,67,10,.3)",
-        borderWidth: `${top !== undefined ? 1 : 0}px ${right !== undefined ? 1 : 0}px ${bottom !== undefined ? 1 : 0}px ${left !== undefined ? 1 : 0}px`,
+        borderColor: "rgba(216,166,87,.28)",
+        borderWidth: `${top !== undefined ? 1 : 0}px
+                      ${right !== undefined ? 1 : 0}px
+                      ${bottom !== undefined ? 1 : 0}px
+                      ${left !== undefined ? 1 : 0}px`,
       }),
       topbar: {
         position: "relative", zIndex: 5, flexShrink: 0,
         padding: "1.4rem 2.8rem",
         display: "flex", justifyContent: "space-between", alignItems: "center",
-        borderBottom: "1px solid rgba(255,255,255,.04)",
+        borderBottom: "1px solid rgba(235,236,239,.05)",
       },
       eyebrow: {
         fontSize: ".54rem", letterSpacing: ".26em",
-        textTransform: "uppercase", color: "rgba(154,148,136,.4)",
+        textTransform: "uppercase", color: "rgba(142,146,153,.4)",
       },
       id: {
         fontSize: ".54rem", letterSpacing: ".2em",
-        textTransform: "uppercase", color: "rgba(229,67,10,.38)",
+        textTransform: "uppercase", color: "rgba(216,166,87,.5)",
       },
       center: {
         flex: 1, display: "flex", flexDirection: "column",
@@ -265,45 +273,46 @@ export default class LoadingScreen extends Component {
         fontStyle: "italic",
         fontSize: "clamp(7rem, 20vw, 15rem)",
         lineHeight: 1, letterSpacing: "-.04em",
-        color: "#E5430A", userSelect: "none",
+        color: "var(--paper, #EBECEF)",
+        userSelect: "none",
         position: "relative",
       },
       label: {
         fontSize: ".56rem", letterSpacing: ".32em",
-        textTransform: "uppercase", color: "rgba(154,148,136,.5)",
+        textTransform: "uppercase", color: "rgba(142,146,153,.55)",
         minHeight: "1em",
       },
       bottom: {
         position: "relative", zIndex: 5, flexShrink: 0,
         padding: "1.1rem 2.8rem 1.6rem",
-        borderTop: "1px solid rgba(255,255,255,.04)",
+        borderTop: "1px solid rgba(235,236,239,.05)",
         display: "flex", flexDirection: "column", gap: ".65rem",
       },
       track: {
         width: "100%", height: 1,
-        background: "rgba(255,255,255,.07)",
+        background: "rgba(235,236,239,.08)",
         position: "relative",
       },
       fill: {
         position: "absolute", left: 0, top: 0, height: "100%", width: "0%",
-        background: "#E5430A",
+        background: "var(--ember, #D8A657)",
         transition: "width .18s cubic-bezier(.16,1,.3,1)",
       },
       fillDot: {
         position: "absolute", right: -3, top: -3,
         width: 7, height: 7, borderRadius: "50%",
-        background: "#E5430A",
+        background: "var(--ember, #D8A657)",
       },
       meta: {
         display: "flex", justifyContent: "space-between", alignItems: "center",
       },
       metaL: {
         fontSize: ".48rem", letterSpacing: ".2em",
-        textTransform: "uppercase", color: "rgba(154,148,136,.28)",
+        textTransform: "uppercase", color: "rgba(142,146,153,.3)",
       },
       metaR: {
         fontSize: ".48rem", letterSpacing: ".2em",
-        color: "rgba(229,67,10,.42)",
+        color: "rgba(216,166,87,.5)",
       },
     };
 
@@ -311,11 +320,10 @@ export default class LoadingScreen extends Component {
       <>
         <style>{KEYFRAMES}</style>
 
-        <div
-          style={s.root}
-          className={exiting ? "ls-exit" : ""}
-        >
+        <div style={s.root} className={exiting ? "ls-exit" : ""}>
+
           <div style={s.scan} />
+          <div className="ls-scanbeam" />
 
           {/* geo SVG */}
           <svg
@@ -325,25 +333,25 @@ export default class LoadingScreen extends Component {
             xmlns="http://www.w3.org/2000/svg"
           >
             <g className="ls-ring">
-              <circle cx="720" cy="450" r="390" fill="none" stroke="rgba(255,255,255,.04)" strokeWidth=".7" />
-              <circle cx="720" cy="450" r="285" fill="none" stroke="rgba(255,255,255,.04)" strokeWidth=".6" />
-              <circle cx="720" cy="450" r="185" fill="none" stroke="rgba(229,67,10,.05)" strokeWidth=".6" />
+              <circle cx="720" cy="450" r="390" fill="none" stroke="rgba(235,236,239,.04)" strokeWidth=".8" />
+              <circle cx="720" cy="450" r="285" fill="none" stroke="rgba(235,236,239,.03)" strokeWidth=".6" />
+              <circle cx="720" cy="450" r="185" fill="none" stroke="rgba(216,166,87,.06)" strokeWidth=".6" />
             </g>
             <g className="ls-tri">
-              <polygon points="720,140 988,595 452,595" fill="none" stroke="rgba(229,67,10,.09)" strokeWidth=".9" />
-              <polygon points="720,760 452,305 988,305" fill="none" stroke="rgba(229,67,10,.06)" strokeWidth=".9" />
+              <polygon points="720,140 988,595 452,595" fill="none" stroke="rgba(216,166,87,.08)" strokeWidth=".9" />
+              <polygon points="720,760 452,305 988,305" fill="none" stroke="rgba(216,166,87,.05)" strokeWidth=".9" />
             </g>
             <g className="ls-sq">
               <rect x="510" y="240" width="420" height="420"
-                fill="none" stroke="rgba(255,255,255,.05)" strokeWidth=".5"
+                fill="none" stroke="rgba(235,236,239,.04)" strokeWidth=".5"
                 transform="rotate(45 720 450)" />
               <rect x="572" y="302" width="296" height="296"
-                fill="none" stroke="rgba(229,67,10,.07)" strokeWidth=".5" />
+                fill="none" stroke="rgba(216,166,87,.06)" strokeWidth=".5" />
             </g>
-            <line x1="720" y1="0" x2="720" y2="900" stroke="rgba(229,67,10,.04)" strokeWidth=".8" />
-            <line x1="0" y1="450" x2="1440" y2="450" stroke="rgba(229,67,10,.04)" strokeWidth=".8" />
-            <line x1="0" y1="0" x2="1440" y2="900" stroke="rgba(229,67,10,.025)" strokeWidth=".6" />
-            <line x1="0" y1="900" x2="1440" y2="0" stroke="rgba(255,255,255,.02)" strokeWidth=".6" />
+            <line x1="720" y1="0" x2="720" y2="900" stroke="rgba(216,166,87,.04)" strokeWidth=".8" />
+            <line x1="0" y1="450" x2="1440" y2="450" stroke="rgba(216,166,87,.04)" strokeWidth=".8" />
+            <line x1="0" y1="0" x2="1440" y2="900" stroke="rgba(235,236,239,.025)" strokeWidth=".6" />
+            <line x1="0" y1="900" x2="1440" y2="0" stroke="rgba(235,236,239,.02)" strokeWidth=".6" />
           </svg>
 
           {/* corner brackets */}
