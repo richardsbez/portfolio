@@ -1,52 +1,53 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&family=Fira+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ── variáveis ── */
+/* ── LaTeX color palette ── */
 :root {
-  --cv-ink:        #111111;
-  --cv-mid:        #444444;
-  --cv-light:      #888888;
-  --cv-paper:      #ffffff;
-  --cv-ember:      #D8A657;
-  --cv-bg:         #f0ece4;
-  --cv-font-body:  'Open Sans', Helvetica, Arial, sans-serif;
-  --cv-font-mono:  'IBM Plex Mono', monospace;
-  --cv-page-w:     210mm;
-  --cv-page-h:     297mm;
+  --text-grey:  #141414;   /* gray{.08}  */
+  --dark-grey:  #4d4d4d;   /* gray{0.3}  */
+  --light-grey: #d4d4d4;   /* gray{0.83} */
+  --paper:      #ffffff;
+  --bg:         #e8e4dc;
+  --ember:      #D8A657;
+  --mono:       'Fira Mono', 'Courier New', monospace;
+  --sans:       'Fira Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-.cv-back-btn {
-  font-family: var(--cv-font-mono);
-  font-size: .58rem; letter-spacing: .16em; text-transform: uppercase;
-  background: none; border: 1px solid rgba(255,255,255,.18);
-  padding: .22rem .72rem; cursor: pointer; color: rgba(255,255,255,.5);
-  display: flex; align-items: center; gap: .35rem;
-  transition: background .18s, color .18s, border-color .18s;
-}
-.cv-back-btn:hover { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.4); }
-
-/* ── reset ── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-a { color: var(--cv-ink); text-decoration: underline; }
+a { color: var(--text-grey); text-decoration: none; }
+a:hover { text-decoration: underline; }
 
-/* ── toolbar (não imprime) ── */
+/* ══════════════════════ TOOLBAR ══════════════════════ */
 .cv-toolbar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: var(--cv-ink); height: 52px; display: flex; align-items: center;
+  background: #1a1a1a; height: 50px;
+  display: flex; align-items: center;
 }
 .cv-toolbar-inner {
-  width: 100%; max-width: 960px; margin: 0 auto; padding: 0 2rem;
+  width: 100%; max-width: 860px; margin: 0 auto; padding: 0 2rem;
   display: flex; justify-content: space-between; align-items: center;
 }
 .cv-toolbar-logo {
-  font-family: var(--cv-font-mono);
-  font-size: .62rem; letter-spacing: .2em; text-transform: uppercase;
-  color: rgba(255,255,255,.4);
+  font-family: var(--mono);
+  font-size: .58rem; letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(255,255,255,.3);
 }
-.cv-toolbar-right { display: flex; align-items: center; gap: 1rem; }
+.cv-toolbar-right { display: flex; align-items: center; gap: .85rem; }
+.cv-lang-switcher  { display: flex; gap: .2rem; }
+
+.cv-back-btn {
+  font-family: var(--mono);
+  font-size: .54rem; letter-spacing: .14em; text-transform: uppercase;
+  background: none; border: 1px solid rgba(255,255,255,.18);
+  padding: .2rem .65rem; cursor: pointer; color: rgba(255,255,255,.45);
+  display: flex; align-items: center; gap: .3rem;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.cv-back-btn:hover { background: rgba(255,255,255,.09); color: #fff; border-color: rgba(255,255,255,.4); }
+
 .cv-lang-switcher { display: flex; gap: .25rem; }
 .cv-lang-btn {
   font-family: var(--cv-font-mono) !important;
@@ -64,267 +65,214 @@ a { color: var(--cv-ink); text-decoration: underline; }
 .cv-toolbar button.cv-lang-btn--active {
   color: #fff !important;
 }
-
 .cv-download-btn {
-  font-family: var(--cv-font-mono);
-  font-size: .6rem; letter-spacing: .14em; text-transform: uppercase;
-  background: var(--cv-ember); color: #fff; border: none; padding: .38rem 1rem;
-  cursor: pointer; display: flex; align-items: center; gap: .5rem; transition: background .2s;
+  font-family: var(--mono);
+  font-size: .56rem; letter-spacing: .12em; text-transform: uppercase;
+  background: var(--ember); color: #fff; border: none;
+  padding: .34rem .9rem; cursor: pointer;
+  display: flex; align-items: center; gap: .45rem; transition: background .18s;
 }
-.cv-download-btn:hover { background: #E29E30; }
+.cv-download-btn:hover { background: #c4923a; }
 
-/* ── página — tela normal ── */
+/* ══════════════════════ PAGE ══════════════════════ */
 body {
-  background: var(--cv-bg);
-  padding-top: 72px;
-  font-family: var(--cv-font-body);
-  color: var(--cv-ink);
+  background: var(--bg);
+  padding-top: 70px;
+  font-family: var(--sans);
+  color: var(--text-grey);
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
 .cv-sheet {
-  background: var(--cv-paper);
-  width: var(--cv-page-w);
-  min-height: var(--cv-page-h);
-  margin: 0 auto 3rem;
-  box-shadow: 0 4px 40px rgba(0,0,0,.18);
-  padding: 14mm 14mm 18mm;
+  background: var(--paper);
+  width: 210mm;
+  margin: 1.5rem auto 3rem;
+  padding: 13mm 16mm 13mm;
+  box-shadow: 0 2px 32px rgba(0,0,0,.18);
+
+  /* match LaTeX tight layout */
+  font-family: var(--sans);
+  font-size: 10.5pt;
+  line-height: 1.45;
+  color: var(--text-grey);
 }
 
-/* ── cabeçalho ── */
+/* ══════════════════════ HEADER (centered like LaTeX) ══════════════════════ */
 .cv-header {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  gap: 2rem; margin-bottom: 10mm; padding-bottom: 6mm;
-  border-bottom: 2px solid var(--cv-ink);
+  text-align: center;
+  margin-bottom: 6mm;
 }
 .cv-name {
-  font-family: var(--cv-font-body);
-  font-size: 2.55rem; font-weight: 700; line-height: 1.05;
-  letter-spacing: -.01em; color: var(--cv-ink); white-space: pre-line; padding-top: 3rem;}
-.cv-header-right { text-align: right; flex-shrink: 0; padding-top: 3rem; }
-.cv-contact-line { font-size: .8rem; color: var(--cv-mid); line-height: 1.65; }
-.cv-contact-line a { color: var(--cv-mid); }
-
-/* ── corpo 2 colunas ── */
-.cv-body {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 0 10mm; align-items: start;
+  font-family: var(--sans);
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--text-grey);
+  line-height: 1.1;
+  margin-bottom: 4px;
 }
+.cv-contact {
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--dark-grey);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  flex-wrap: wrap;
+}
+.cv-contact a { color: var(--dark-grey); }
+.cv-contact a:hover { text-decoration: underline; }
+.cv-sep { color: var(--dark-grey); }
 
-/* ── seções ── */
-.cv-section { margin-bottom: 7mm; }
+/* ══════════════════════ SECTIONS ══════════════════════ */
+.cv-section {
+  margin-bottom: 4.5mm;
+}
 .cv-section-title {
-  font-family: var(--cv-font-body); font-size: .82rem; font-weight: 700;
-  letter-spacing: .09em; text-transform: uppercase;
-  color: var(--cv-ink); margin-bottom: 2mm;
+  font-family: var(--sans);
+  font-size: .92rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: var(--text-grey);
+  margin-bottom: 1.5mm;
 }
-.cv-rule { height: 1.5px; background: var(--cv-ink); margin-bottom: 3.5mm; }
-.cv-summary { font-size: .88rem; line-height: 1.65; color: var(--cv-mid); }
-
-/* ── experiência ── */
-.cv-exp { margin-bottom: 4mm; }
-.cv-exp-role {
-  font-family: var(--cv-font-body); font-style: italic; font-weight: 600;
-  font-size: .88rem; color: var(--cv-ink);
-}
-.cv-exp-meta { font-size: .78rem; color: var(--cv-light); margin-bottom: 1.5mm; }
-.cv-exp-list { list-style: disc; padding-left: 1.1rem; }
-.cv-exp-list li { font-size: .82rem; line-height: 1.6; color: var(--cv-mid); margin-bottom: .8mm; }
-
-/* ── tecnologias / competências ── */
-.cv-sub-title {
-  font-family: var(--cv-font-body); font-style: italic; font-weight: 600;
-  font-size: .84rem; color: var(--cv-ink); margin-bottom: 2mm;
-}
-.cv-tech-list, .cv-other-list { margin-bottom: 2mm; }
-.cv-tech-row, .cv-other-row {
-  font-size: .8rem; line-height: 1.55; color: var(--cv-mid); margin-bottom: 1.5mm;
-}
-.cv-tech-row strong, .cv-other-row strong { color: var(--cv-ink); font-style: italic; }
-
-/* ── línguas ── */
-.cv-lang-list { list-style: disc; padding-left: 1.1rem; }
-.cv-lang-list li { font-size: .82rem; line-height: 1.65; color: var(--cv-mid); font-style: italic; }
-
-/* ── educação ── */
-.cv-edu { margin-bottom: 3mm; }
-.cv-edu-inst { font-style: italic; font-weight: 600; font-size: .86rem; color: var(--cv-ink); }
-.cv-edu-degree { font-size: .8rem; color: var(--cv-mid); }
-
-
-/* ══════════════════════════════════════════════════
-   RESPONSIVO — tablet (768px – 900px)
-   Header empilhado, 2 colunas mantidas
-   ══════════════════════════════════════════════════ */
-@media screen and (max-width: 900px) and (min-width: 768px) {
-  body { padding-top: 72px; }
-
-  .cv-toolbar {
-    flex-direction: column;
-    height: auto;
-    padding: 6px 0 4px;
-    position: sticky; /* Substitui o fixed do PC */
-    top: 0;
-  }
-
-  .cv-toolbar-logo { display: none; }
-
-  .cv-sheet {
-    width: 100%;
-    min-height: unset;
-    padding: 10mm 10mm 14mm;
-    box-shadow: none;
-    margin-bottom: 2rem;
-  }
-
-  /* empilha o header para o nome não brigar com os contatos */
-  .cv-header {
-    flex-direction: row;
-    align-items: flex-start;
-  }
-
-  .cv-header-right { text-align: right; padding-top: 2rem; }
-
-  .cv-name { font-size: 2.1rem; }
+/* LaTeX: \color{light-grey} {\titlerule[2pt]} */
+.cv-rule {
+  border: none;
+  border-top: 2.5px solid var(--light-grey);
+  margin-bottom: 3mm;
 }
 
+/* ══════════════════════ EXPERIENCE ENTRIES ══════════════════════ */
+.cv-entry {
+  margin-bottom: 3.5mm;
+}
+/* tabular*: bold-company LEFT, grey-date RIGHT */
+.cv-entry-row1,
+.cv-entry-row2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.cv-entry-company {
+  font-size: .88rem;
+  font-weight: 700;
+  color: var(--text-grey);
+}
+.cv-entry-period {
+  font-family: var(--mono);
+  font-size: .74rem;
+  color: var(--dark-grey);
+  white-space: nowrap;
+  margin-left: .75rem;
+}
+/* italic role, grey location — LaTeX row 2 */
+.cv-entry-role {
+  font-size: .84rem;
+  color: var(--text-grey);
+  font-style: italic;
+}
+.cv-entry-location {
+  font-family: var(--mono);
+  font-size: .74rem;
+  color: var(--dark-grey);
+  white-space: nowrap;
+  margin-left: .75rem;
+}
 
+/* ══════════════════════ BULLET LIST ══════════════════════ */
+/* LaTeX: \begin{itemize} with small bullets */
+.cv-list {
+  list-style: disc;
+  padding-left: 1.1rem;
+  margin-top: 1mm;
+}
+.cv-list li {
+  font-size: .82rem;
+  line-height: 1.55;
+  color: var(--text-grey);
+  margin-bottom: .2mm;
+}
+/* LaTeX \labelitemii tiny bullet */
+.cv-list li::marker { font-size: .6em; }
+
+/* ══════════════════════ PROJECTS ══════════════════════ */
+/* \resumeProjectHeading: bold name left, grey date right */
+.cv-proj-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: .5mm;
+}
+.cv-proj-name {
+  font-size: .88rem;
+  font-weight: 700;
+  color: var(--text-grey);
+}
+.cv-proj-date {
+  font-family: var(--mono);
+  font-size: .74rem;
+  color: var(--dark-grey);
+  white-space: nowrap;
+  margin-left: .75rem;
+}
+
+/* ══════════════════════ SKILLS ══════════════════════ */
+/* LaTeX: \begin{itemize}[leftmargin=0in] \textbf{Label} {: Value} */
+.cv-skills {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.cv-skill-row {
+  font-size: .82rem;
+  line-height: 1.65;
+  color: var(--text-grey);
+}
+.cv-skill-label {
+  font-weight: 700;
+}
+.cv-skill-colon {
+  margin: 0 .2rem;
+}
+
+/* ══════════════════════ RESPONSIVE ══════════════════════ */
 @media screen and (max-width: 767px) {
-  .cv-toolbar {
-    height: auto;
-    padding: 0;
-    position: sticky;
-    top: 0;
-  }
-
-  .cv-toolbar-inner {
-    padding: 0;
-    flex-direction: column;
-    gap: 0;
-    align-items: stretch;
-  }
-
-  /* ── linha 1: ← INÍCIO  |  ↓ BAIXAR PDF ── */
-  .cv-toolbar-right {
-    display: contents; /* deixa os filhos participarem do flex do inner */
-  }
-
-  .cv-back-btn,
-  .cv-download-btn {
-    order: 1;
-  }
-
-  /* row que agrupa back + download na mesma linha */
-  .cv-toolbar-inner::before {
-    content: none; /* sem pseudo-elementos, usamos flexbox diretamente */
-  }
-
-  /* wrapper linha 1 */
-  .cv-toolbar-row1 {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 12px;
-  }
-
-  .cv-back-btn {
-    font-size: .52rem;
-    padding: .22rem .6rem;
-  }
-
-  .cv-download-btn {
-    font-size: .52rem;
-    padding: .3rem .8rem;
-  }
-
+  .cv-toolbar { height: auto; position: sticky; top: 0; }
+  .cv-toolbar-inner { flex-direction: column; padding: 0; gap: 0; align-items: stretch; }
+  .cv-toolbar-right { display: contents; }
   .cv-toolbar-logo { display: none; }
-
-  /* ── linha 2: idiomas com scroll suave ── */
+  .cv-toolbar-row1 {
+    display: flex; justify-content: space-between; align-items: center; padding: 6px 12px;
+  }
+  .cv-back-btn, .cv-download-btn { font-size: .5rem; padding: .28rem .65rem; }
   .cv-lang-switcher {
-    display: flex;
-    gap: .25rem;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding: 4px 12px 6px;
-    border-top: 1px solid rgba(255,255,255,.08);
-    justify-content: flex-start; /* scroll a partir da esquerda */
+    overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    padding: 4px 12px 6px; border-top: 1px solid rgba(255,255,255,.08);
   }
-
   .cv-lang-switcher::-webkit-scrollbar { display: none; }
-
-  .cv-lang-btn {
-    flex-shrink: 0; /* impede os botões de encolherem */
-    padding: .2rem .55rem;
-    font-size: .52rem;
-  }
-
+  .cv-lang-btn { flex-shrink: 0; font-size: .5rem; padding: .18rem .5rem; }
   body { padding-top: 0; }
-
-  .cv-sheet {
-    width: 100%;
-    min-height: unset;
-    margin: 0 0 2rem;
-    box-shadow: none;
-    border-radius: 0;
-    padding: 6vw 5vw 10vw;
-  }
-
-  .cv-header {
-    flex-direction: column;
-    gap: .8rem;
-    margin-bottom: 6vw;
-    padding-bottom: 4vw;
-  }
-
-  .cv-name { font-size: 2rem; white-space: normal; padding-top: 0; }
-
-  .cv-header-right { text-align: left; padding-top: 0; }
-
-  .cv-contact-line { font-size: .88rem; }
-
-  .cv-body { grid-template-columns: 1fr; gap: 0; }
-
-  .cv-section { margin-bottom: 6vw; }
-  .cv-section-title { font-size: .9rem; margin-bottom: 2vw; }
-  .cv-rule { margin-bottom: 3vw; }
-  .cv-summary { font-size: 1rem; }
-  .cv-exp-role { font-size: 1rem; }
-  .cv-exp-meta { font-size: .88rem; }
-  .cv-exp-list li { font-size: .92rem; }
-  .cv-sub-title { font-size: .96rem; }
-  .cv-tech-row, .cv-other-row { font-size: .9rem; }
-  .cv-lang-list li { font-size: .92rem; }
-  .cv-edu-inst { font-size: .96rem; }
-  .cv-edu-degree { font-size: .9rem; }
+  .cv-sheet { width: 100%; min-height: unset; margin: 0 0 2rem; box-shadow: none; padding: 6vw 5vw 8vw; }
+  .cv-name { font-size: 1.4rem; }
+}
+@media screen and (min-width: 768px) and (max-width: 900px) {
+  .cv-sheet { width: 100%; box-shadow: none; padding: 10mm; }
 }
 
-/* ══════════════════════════════════════════════════
-   print — escala o conteúdo para caber em 1 página
-   sem alterar nenhum tamanho de fonte/espaçamento
-   ══════════════════════════════════════════════════ */
+/* ══════════════════════ PRINT — 1 page ══════════════════════ */
 @media print {
-  @page {
-    size: a4 portrait;
-    margin: 0;
-  }
+  @page { size: a4 portrait; margin: 0; }
 
   .no-print { display: none !important; }
 
   html, body {
-    width: 210mm;
-    height: 297mm;
-    overflow: hidden;
-    background: white !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  body {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
+    width: 210mm; height: 297mm;
+    overflow: hidden; background: white !important;
+    padding: 0 !important; margin: 0 !important;
+    display: block;
   }
 
   .cv-sheet {
@@ -332,22 +280,19 @@ body {
     min-height: auto !important;
     margin: 0 !important;
     box-shadow: none !important;
-    padding: 14mm 14mm 18mm !important; /* restaura padding original no print */
-    transform-origin: top center;
-    transform: scale(0.78);
+    padding: 13mm 16mm 13mm !important;
+    /* scale down slightly so content fits 1 page */
+    transform-origin: top left;
+    transform: scale(0.95);
   }
-
-  /* garante 2 colunas no print independente do viewport */
-  .cv-body {
-    grid-template-columns: 1fr 1fr !important;
-  }
-
-  /* garante header em linha no print */
-  .cv-header {
-    flex-direction: row !important;
-  }
-
-  .cv-name { font-size: 2.55rem !important; }
 }
 
-
+/* desktop: hide row1 download, show toolbar-right download */
+@media screen and (min-width: 768px) {
+  .cv-toolbar-row1 { display: none; }
+  .cv-toolbar-inner { flex-direction: row; }
+}
+/* mobile: hide toolbar-right download */
+@media screen and (max-width: 767px) {
+  .cv-download-desktop { display: none !important; }
+}

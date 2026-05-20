@@ -8,7 +8,7 @@ const PT = {
   prof: {
     ey: "profissional",
     rows: [
-      { k: "Currículo em PDF", v: "ver →", em: false, href: "/resume" },
+      { k: "Currículo em PDF ", v: "ver →", em: false, href: "/resume" },
       { k: "GitHub", v: "@richardsbez", em: false, href: "https://github.com/richardsbez" },
       { k: "LinkedIn", v: "conectar →", em: false, href: "https://linkedin.com/in/richardsbezerra" },
       { k: "Startup", v: "ayrCore tech", em: false, href: "https://www.ayrcoretech.com/pt-BR" },
